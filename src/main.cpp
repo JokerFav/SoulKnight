@@ -33,15 +33,12 @@ int main(int argc, char* argv[])
 			}
 		}
 		main_window.before_render();
-
-		main_map.map_render(main_window);
 		
 		float now = SDL_GetTicks() * 0.001f;
 		main_player.player_update(delta_time, now);
+		main_map.map_render(main_window);
 
-		decor.render_behind(main_window, main_player.get_y());
 		main_player.player_render(main_window);
-		decor.render_front(main_window, main_player.get_y());
 
 
 		main_wall.render_front(main_window, 0.0f);
