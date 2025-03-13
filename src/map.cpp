@@ -41,7 +41,31 @@ void Map::map_init(Window &main_window)
 	map_tiles.emplace_back(SDL_Rect{473, 432, 6, 148});
 	map_tiles.emplace_back(SDL_Rect{206, 574, 267, 6});
 	map_tiles.emplace_back(SDL_Rect{272, 235, 10, 4});
-
+	map_tiles.emplace_back(SDL_Rect{142, 225, 58, 25});
+	map_tiles.emplace_back(SDL_Rect{167, 214, 8, 5});
+	map_tiles.emplace_back(SDL_Rect{137, 253, 8, 5});
+	map_tiles.emplace_back(SDL_Rect{192, 255, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{272, 234, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{304, 282, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{80, 250, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{66, 206, 26, 10});
+	map_tiles.emplace_back(SDL_Rect{229, 290, 26, 10});
+	map_tiles.emplace_back(SDL_Rect{241, 266, 8, 6});
+	map_tiles.emplace_back(SDL_Rect{145, 282, 8, 6});
+	map_tiles.emplace_back(SDL_Rect{320, 511, 42, 24});
+	map_tiles.emplace_back(SDL_Rect{321, 462, 42, 24});
+	map_tiles.emplace_back(SDL_Rect{345, 492, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{391, 513, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{280, 536, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{223, 506, 10, 5});
+	map_tiles.emplace_back(SDL_Rect{296, 506, 8, 5});
+	map_tiles.emplace_back(SDL_Rect{407, 442, 8, 5});
+	map_tiles.emplace_back(SDL_Rect{217, 530, 22, 10});
+	map_tiles.emplace_back(SDL_Rect{436, 521, 10, 10});
+	map_tiles.emplace_back(SDL_Rect{437, 473, 22, 10});
+	map_tiles.emplace_back(SDL_Rect{276, 495, 16, 14});
+	map_tiles.emplace_back(SDL_Rect{388, 495, 16, 14});
+	
 
 
 }
