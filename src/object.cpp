@@ -10,7 +10,7 @@ void Object::render_behind(Window &main_window, float y)
 {
 	SDL_Rect p_in, p_out;
 	for(int i = 0; i < (int)pos.size(); ++i)
-		if(pos[i].y <= y)
+		//if(pos[i].y <= y)
 		{
 			p_in = tiles[order[i]];
 			p_out.x = pos[i].x - camera.x;
@@ -25,7 +25,7 @@ void Object::render_front(Window &main_window, float y)
 {
 	SDL_Rect p_in, p_out;
 	for(int i = 0; i < (int)pos.size(); ++i)
-		if(pos[i].y > y)
+		//if(pos[i].y > y)
 		{
 			p_in = tiles[order[i]];
 			p_out.x = pos[i].x - camera.x;
@@ -138,5 +138,13 @@ Decorations::Decorations(Window &main_window):
 	order.emplace_back(7);
 	tiles.emplace_back(SDL_Rect{19, 65, 10, 14});
 	pos.emplace_back(vector2f{436, 517});
+
+	order.emplace_back(8);
+	tiles.emplace_back(SDL_Rect{8, 110, 16, 24});
+	pos.emplace_back(vector2f{276, 485});
+
+	order.emplace_back(9);
+	tiles.emplace_back(SDL_Rect{40, 101, 16, 24});
+	pos.emplace_back(vector2f{388, 485});
 
 }
