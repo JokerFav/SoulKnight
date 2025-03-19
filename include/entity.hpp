@@ -1,6 +1,6 @@
 #ifndef entity_HPP
 #define entity_HPP
-#include "map.hpp"
+#include "vector2f.hpp"
 using namespace std;
 
 

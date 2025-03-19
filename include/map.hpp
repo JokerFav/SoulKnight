@@ -1,6 +1,6 @@
 #ifndef map_HPP
 #define map_HPP
-#include "vector2f.hpp"
+#include "window.hpp"
 using namespace std;
 
 class Map

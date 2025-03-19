@@ -1,6 +1,6 @@
 #ifndef fantasy_HPP
 #define fantasy_HPP
-#include "entity.hpp"
+#include "window.hpp"
 using namespace std;
 
 class Sword : public Entity

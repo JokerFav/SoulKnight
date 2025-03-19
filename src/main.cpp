@@ -3,6 +3,7 @@
 #include "object.hpp"
 #include "fantasy.hpp"
 #include "enemy.hpp"
+#include "window.hpp"
 using namespace std;
 
 int main(int argc, char* argv[])

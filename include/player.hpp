@@ -1,7 +1,7 @@
 #ifndef player_HPP
 #define player_HPP
 
-#include "entity.hpp"
+#include "Window.hpp"
 using namespace std;
 
 class Player : public Entity 

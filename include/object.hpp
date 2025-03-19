@@ -1,6 +1,6 @@
 #ifndef object_HPP
 #define object_HPP
-#include "vector2f.hpp"
+#include "Window.hpp"
 using namespace std;
 
 

@@ -1,6 +1,6 @@
 #ifndef enemy_HPP
 #define enemy_HPP
-#include "entity.hpp"
+#include "Window.hpp"
 using namespace std;
 
 class Enemy : public Entity
