@@ -1,0 +1,42 @@
+map_tiles.emplace_back(SDL_Rect{44, 86, 8, 158});
+map_tiles.emplace_back(SDL_Rect{52, 80, 294, 6});
+map_tiles.emplace_back(SDL_Rect{390, 80, 70, 6});
+map_tiles.emplace_back(SDL_Rect{460, 86, 8, 158});
+map_tiles.emplace_back(SDL_Rect{268, 234, 192, 10});
+map_tiles.emplace_back(SDL_Rect{52, 234, 32, 12});
+map_tiles.emplace_back(SDL_Rect{172, 234, 72, 10});
+map_tiles.emplace_back(SDL_Rect{236, 206, 8, 32});
+map_tiles.emplace_back(SDL_Rect{268, 206, 8, 32});
+map_tiles.emplace_back(SDL_Rect{236, 202, 40, 10});
+map_tiles.emplace_back(SDL_Rect{236, 86, 8, 32});
+map_tiles.emplace_back(SDL_Rect{268, 86, 8, 32});
+map_tiles.emplace_back(SDL_Rect{244, 110, 24, 8});
+map_tiles.emplace_back(SDL_Rect{172, 244, 8, 34});
+map_tiles.emplace_back(SDL_Rect{180, 270, 58, 8});
+map_tiles.emplace_back(SDL_Rect{274, 270, 186, 8});
+map_tiles.emplace_back(SDL_Rect{460, 278, 8, 958});
+map_tiles.emplace_back(SDL_Rect{76, 246, 8, 32});
+map_tiles.emplace_back(SDL_Rect{52, 266, 24, 12});
+map_tiles.emplace_back(SDL_Rect{44, 278, 8, 958});
+map_tiles.emplace_back(SDL_Rect{52, 1226, 68, 10});
+map_tiles.emplace_back(SDL_Rect{168, 1226, 292, 10});
+map_tiles.emplace_back(SDL_Rect{236, 1194, 8, 32});
+map_tiles.emplace_back(SDL_Rect{268, 1194, 8, 32});
+map_tiles.emplace_back(SDL_Rect{244, 1194, 24, 10});
+map_tiles.emplace_back(SDL_Rect{52, 522, 212, 12});
+map_tiles.emplace_back(SDL_Rect{344, 522, 116, 12});
+map_tiles.emplace_back(SDL_Rect{204, 534, 8, 191});
+map_tiles.emplace_back(SDL_Rect{52, 714, 256, 44});
+map_tiles.emplace_back(SDL_Rect{396, 714, 64, 44});
+map_tiles.emplace_back(SDL_Rect{52, 906, 32, 12});
+map_tiles.emplace_back(SDL_Rect{172, 906, 288, 12});
+map_tiles.emplace_back(SDL_Rect{52, 1066, 288, 12});
+map_tiles.emplace_back(SDL_Rect{428, 1066, 32, 12});
+map_tiles.emplace_back(SDL_Rect{236, 1078, 40, 32});
+map_tiles.emplace_back(SDL_Rect{236, 758, 40, 32});
+map_tiles.emplace_back(SDL_Rect{236, 874, 40, 32});
+
+
+
+
+
