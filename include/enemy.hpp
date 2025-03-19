@@ -6,6 +6,7 @@ using namespace std;
 class Enemy : public Entity
 {
 public:
+	virtual ~Enemy() = default;
 	Enemy(vector2f spawn_point, SDL_Rect new_sprite);
 protected:
 	int health_point, state, order, wait, speed;

@@ -61,13 +61,13 @@ int main(int argc, char* argv[])
 		decor.render_front(main_player.get_leg_rect().y);
 		main_wall.render_front(main_player.get_leg_rect().y);	
 
-		/*for(Enemy* e: enemies)
+		for(Enemy *e: enemies)
 		{
 			if(Slime* enemy = dynamic_cast<Slime*>(e))
 				enemy->update(now);
 		}
 
-		for()*/
+		for(Enemy *e: enemies) main_window.render_entity(*e);
 
 
 		main_window.present();

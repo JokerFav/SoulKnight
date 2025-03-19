@@ -55,8 +55,8 @@ void Entity::set_flip(SDL_RendererFlip new_flip)
 
 void Entity::set_sprite(vector2f new_pos)
 {
-	sprite.x = new_pos.y * sprite.h;
-	sprite.y = new_pos.x * sprite.w;
+	sprite.x = new_pos.y * sprite.w;
+	sprite.y = new_pos.x * sprite.h;
 }
 
 bool Entity::collision_detection(SDL_Rect x, vector<SDL_Rect>& y)
