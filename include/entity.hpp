@@ -18,13 +18,15 @@ public:
 	void set_flip(SDL_RendererFlip new_flip);
 	void set_sprite(vector2f new_pos);
 	bool collision_detection(SDL_Rect x, vector<SDL_Rect>& y);
-	void move_x(int speed, SDL_Rect l_rect);
-	void move_y(int speed, SDL_Rect l_rect);
+	void move_x(float speed, SDL_Rect l_rect);
+	void move_y(float speed, SDL_Rect l_rect);
 protected:
 	vector2f pos;
 	float last_update;
 	SDL_Texture* texture;
-	SDL_Rect sprite;
+	SDL_Rect sprite, hitbox;
+	int state, health_point, order;
+	float speed;
 	SDL_RendererFlip flip;
 };
 

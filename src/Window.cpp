@@ -60,7 +60,6 @@ void Window::render_entity(Entity &entity)
 	dst.y = entity.get_pos().y - camera.y;
 	dst.w = src.w;
 	dst.h = src.h;
-	cout << src.x << " " << src.y << " " << src.w << " " << src.h << endl;
 
 	SDL_RenderCopyEx(renderer, entity.get_tex(), &src, &dst, 0, NULL, entity.get_flip());
 }

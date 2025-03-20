@@ -67,27 +67,26 @@ bool Entity::collision_detection(SDL_Rect x, vector<SDL_Rect>& y)
 	return false;
 }
 
-void Entity::move_x(int speed, SDL_Rect l_rect)
+void Entity::move_x(float speed, SDL_Rect l_rect)
 {
-	float delta_time = FRAME_DELAY / 1000.0f;
-	pos.x += delta_time * speed;
-	l_rect.x += round(delta_time * speed);
+	pos.x += speed;
+	l_rect.x += max(round(speed), (speed > 0.0f ? 1.0f : -1.0f));
 	if(collision_detection(l_rect, map_tiles))
 	{
-		pos.x -= delta_time * speed;
-		//cout << "collision detected on x-axis" << endl;
+		pos.x -= speed;
+		cout << "collision detected on x-axis" << endl;
 	}
 }
 
-void Entity::move_y(int speed, SDL_Rect l_rect)
+void Entity::move_y(float speed, SDL_Rect l_rect)
 {
-	float delta_time = FRAME_DELAY / 1000.0f;
-	pos.y += delta_time * speed;
-	l_rect.y += round(delta_time * speed);
+	pos.y += speed;
+	l_rect.y += max(round(speed), (speed > 0.0f ? 1.0f : -1.0f));
+	cout << "before: " << l_rect.y << endl;
 	if(collision_detection(l_rect, map_tiles))
 	{
-		pos.y -= delta_time * speed;
-		//cout << "collision detected on x-axis" << endl;
+		pos.y -= speed;
+		cout << "collision detected on y-axis " << l_rect.y << endl;
 	}
 }
 

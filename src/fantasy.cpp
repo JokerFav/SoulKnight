@@ -62,7 +62,7 @@ void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 	if(order == 4)
 	{
 		//cout << now - last_attack << endl;
-		if(key[SDL_SCANCODE_J] && now - last_attack > 1.0f)
+		if(key[SDL_SCANCODE_J] && now - last_attack > 1)
 		{
 			//cout << "HAHA" << endl;
 			if(player_flip == SDL_FLIP_NONE) state = 1;

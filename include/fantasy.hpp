@@ -11,9 +11,8 @@ public:
 	bool is_attacking();
 	void attack(float now, vector2f player_pos, SDL_RendererFlip player_flip);
 private:
-	int order, state;
 	double roll;
-	float last_attack, last_update;
+	float last_attack;
 };
 
 
