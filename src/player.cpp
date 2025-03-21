@@ -43,8 +43,8 @@ SDL_Rect Player::get_leg_rect()
 
 SDL_Rect Player::get_hitbox()
 {
-	hitbox.x = pos.x + 8;
-	hitbox.y = pos.y + 10;
+	hitbox.x = (int)pos.x + 8;
+	hitbox.y = (int)pos.y + 10;
 	hitbox.w = 15;
 	hitbox.h = 20;
 	return hitbox;
@@ -79,6 +79,8 @@ void Player::update(float current_time, bool is_attacking, float delta_time)
 			set_flip(SDL_FLIP_NONE);
 	}
 
+	set_sprite(vector2f(0, state * 4 + order));
+
 	if(current_time - last_update > 0.1f)
 	{
 		last_update = current_time;
@@ -91,7 +93,6 @@ void Player::update(float current_time, bool is_attacking, float delta_time)
 				order = (order + 1) % 8;
 				break;
 		}
-		set_sprite(vector2f(0, state * 4 + order));
 	}
 	camera_update();
 }

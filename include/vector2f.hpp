@@ -20,7 +20,7 @@ const int MAP_HEIGHT = 1200;
 const int CAMERA_WIDTH = 200;
 const int CAMERA_HEIGHT = 152;
 const string WINDOW_NAME = "JokerFav's screen";
-const int FPS = 100;
+const int FPS = 60;
 const float FRAME_DELAY = 1000.0f / FPS;
 inline mt19937 random(chrono::steady_clock::now().time_since_epoch().count());
 

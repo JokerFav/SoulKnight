@@ -74,7 +74,7 @@ void Entity::move_x(float speed, SDL_Rect l_rect)
 	if(collision_detection(l_rect, map_tiles))
 	{
 		pos.x -= speed;
-		cout << "collision detected on x-axis" << endl;
+		//cout << "collision detected on x-axis" << endl;
 	}
 }
 
@@ -82,11 +82,10 @@ void Entity::move_y(float speed, SDL_Rect l_rect)
 {
 	pos.y += speed;
 	l_rect.y += max(round(speed), (speed > 0.0f ? 1.0f : -1.0f));
-	cout << "before: " << l_rect.y << endl;
 	if(collision_detection(l_rect, map_tiles))
 	{
 		pos.y -= speed;
-		cout << "collision detected on y-axis " << l_rect.y << endl;
+		//cout << "collision detected on y-axis " << l_rect.y << endl;
 	}
 }
 
