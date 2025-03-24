@@ -12,14 +12,14 @@ Enemy::Enemy(vector2f spawn_point, SDL_Rect new_sprite):
 	pos = spawn_point;
 	sprite = new_sprite;
 	last_update = 0;
-	target.x = 8 + random() % 16;
-	target.y = 10 + random() % 21;
+	target.x = 13 + random() % 4;
+	target.y = 18 + random() % 4;
 }
 
 Slime::Slime(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 32, 32})
 {
-	health_point = 3;
+	health_point = 5;
 	speed = 15;
 	state = 1;
 	wait = 2;
@@ -95,6 +95,10 @@ void Slime::update(float current_time, float delta_time)
 		order = 1;
 		wait = 4;
 		health_point--;
+		if(main_player.get_flip() == SDL_FLIP_NONE)
+			direction.x = 1;
+		else direction.x = -1;
+		direction.y = 1.0f / (1 + random() % 5);
 	}
 
 	if(health_point == 0)
@@ -204,6 +208,8 @@ void Slime::update(float current_time, float delta_time)
 			break;
 		case 4:
 			set_sprite(vector2f(0, 20 + order));
+			move_x(speed * 2.0f * delta_time * direction.x, hitbox);
+			move_y(speed * 1.5f * delta_time * direction.y, hitbox);
 			break;
 		case 5:
 			set_sprite(vector2f(0, 24 + order));
