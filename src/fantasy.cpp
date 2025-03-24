@@ -1,6 +1,8 @@
 #include "fantasy.hpp"
 using namespace std;
 
+Sword sword;
+
 Sword::Sword():
 	Entity()
 {
@@ -25,12 +27,26 @@ void Sword::sword_render()
 
 bool Sword::is_attacking()
 {
-	return (order < 4);
+	return (state > 0);
+}
+
+SDL_Rect Sword::get_attack_hitbox()
+{
+	SDL_Rect attack_hitbox = SDL_Rect{0, 0, 0, 0};
+	switch(state)
+	{
+		case 1:
+			attack_hitbox = SDL_Rect{(int)pos.x + 7, (int)pos.y - 3, 20, 23};
+			break;
+		case 2:
+			attack_hitbox = SDL_Rect{(int)pos.x, (int)pos.y - 3, 20, 23};
+			break;
+	}
+	return attack_hitbox;
 }
 
 void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 {
-
 	if(player_flip == SDL_FLIP_NONE)
 	{
 		if(order == 4)
@@ -57,14 +73,14 @@ void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 			pos.y = player_pos.y + 6;
 		}
 	}
-	//cout << order << endl;
+	
 	const Uint8* key = SDL_GetKeyboardState(NULL);
 	if(order == 4)
 	{
-		//cout << now - last_attack << endl;
+		
 		if(key[SDL_SCANCODE_J] && now - last_attack > 1)
 		{
-			//cout << "HAHA" << endl;
+			
 			if(player_flip == SDL_FLIP_NONE) state = 1;
 			else state = 2;
 			order = 0;
@@ -76,20 +92,21 @@ void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 			roll = 0;
 		}
 	}
+
 	if(now - last_update > 0.1f)
 	{
 		last_update = now;
 		switch(state)
 		{
-			case 0:
+			case 0: // idle
 				set_sprite(vector2f(0, 0));
 				break;
-			case 1:
+			case 1: // attack right
 				set_sprite(vector2f(state, order));
 				order++;
 				roll = 90;
 				break;
-			case 2:
+			case 2: // attack left
 				set_sprite(vector2f(state, order));
 				order++;
 				roll = 270;

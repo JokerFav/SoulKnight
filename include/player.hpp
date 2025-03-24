@@ -17,5 +17,7 @@ private:
 	//real hitbox = +8, +10, 15, 20
 };
 
+extern Player main_player;
+
 
 #endif

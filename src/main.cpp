@@ -11,10 +11,8 @@ int main(int argc, char* argv[])
 	main_window.before_render();
 	Map main_map;
 	main_map.map_init();
-	Player main_player;
 	Wall main_wall;
 	Decorations decor;
-	Sword sword;
 	
 	spawn_enemies();
 
@@ -31,6 +29,7 @@ int main(int argc, char* argv[])
 	while(is_running)
 	{
 		Uint32 frame_start = SDL_GetPerformanceCounter();
+
 
 		while(SDL_PollEvent(&event))
 		{
@@ -70,9 +69,16 @@ int main(int argc, char* argv[])
 		for(Enemy *e: enemies)
 		{
 			if(Slime* enemy = dynamic_cast<Slime*>(e))
-				enemy->update(current_time, main_player.get_pos(), delta_time,
-					main_player.get_hitbox());
+				enemy->update(current_time, delta_time);
 		}
+
+		for(int i = 0; i < (int)enemies.size(); i++)
+			if((*enemies[i]).is_death())
+			{
+				swap(enemies[i], enemies.back());
+				enemies.pop_back();
+				i--;
+			}
 
 		for(Enemy *e: enemies) main_window.render_entity(*e);
 

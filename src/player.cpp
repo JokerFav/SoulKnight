@@ -1,6 +1,8 @@
 #include "player.hpp"
 using namespace std;
 
+Player main_player;
+
 Player::Player():
 	Entity({CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2})
 {

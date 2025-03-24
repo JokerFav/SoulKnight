@@ -1,4 +1,6 @@
 #include "enemy.hpp"
+#include "player.hpp"
+#include "fantasy.hpp"
 using namespace std;
 
 vector <Enemy*> enemies;
@@ -6,7 +8,7 @@ vector <Enemy*> enemies;
 Enemy::Enemy(vector2f spawn_point, SDL_Rect new_sprite):
 	Entity(spawn_point) // player's hitbox = {+8, +10, 15, 20}
 {
-	spawned = 0;
+	spawned = death = false;
 	pos = spawn_point;
 	sprite = new_sprite;
 	last_update = 0;
@@ -31,7 +33,7 @@ Slime::Slime(vector2f spawn_point):
 
 SDL_Rect Slime::get_attack_hitbox()
 {
-	SDL_Rect current_hitbox;
+	SDL_Rect current_hitbox = SDL_Rect{11, 17, 10, 11};
 	if(state == 3)
 	{
 		switch(order)
@@ -50,24 +52,65 @@ SDL_Rect Slime::get_attack_hitbox()
 				break;
 		}
 	}
-	else current_hitbox = hitbox;
 	current_hitbox.x += pos.x;
 	current_hitbox.y += pos.y;
 	return current_hitbox;
 }
 
-
-void Slime::update(float current_time, vector2f new_target, float delta_time
-	,SDL_Rect player_hitbox)
+bool Enemy::is_death()
 {
-	hitbox = SDL_Rect{(int)pos.x + 11, (int)pos.y + 17, 10, 11};
+	return death;
+}
+
+void Slime::update(float current_time, float delta_time)
+{
+	if(wait == 0 && state == 5) 
+	{
+		death = true;
+		return;
+	}
+	hitbox = get_attack_hitbox();
 	vector2f core(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2);
+	SDL_Rect player_hitbox = main_player.get_hitbox();
+	SDL_Rect weapon_hitbox = sword.get_attack_hitbox();
+
+	if(!spawned)
+	{
+		if( hitbox.x >= camera.x &&
+		hitbox.y >= camera.y &&
+		hitbox.x + hitbox.w <= camera.x + camera.w &&
+		hitbox.y + hitbox.h <= camera.y + camera.h)
+		{
+			spawned = true;
+			state = order = 0;
+			wait = 4;
+		}
+		else return;
+	}
+
+	if(sword.is_attacking() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
+		&& ((state > 0 && state < 4) || (state == 4 && wait == 0)))
+	{
+		state = 4;
+		order = 1;
+		wait = 4;
+		health_point--;
+	}
+
+	if(health_point == 0)
+	{
+		health_point--;
+		state = 5;
+		order = 0;
+		wait = 8;
+	}
 
 	if(state == 2)
 	{
 		if(max_move.x <= 0.0f && max_move.y <= 0.0f) wait = 0;
-		if(SDL_HasIntersection(&hitbox, &player_hitbox)) wait = 0;
+		if(SDL_HasIntersection(&hitbox, &player_hitbox) == SDL_TRUE) wait = 0;
 	}
+
 
 	if(wait == 0)
 	{
@@ -82,11 +125,17 @@ void Slime::update(float current_time, vector2f new_target, float delta_time
 			switch(state)
 			{
 				case 0:
+					state = 1;
+					order = 0;
+					wait = random() % 5;
 					break;
 				case 1:
+				{
 					state = 2;
 					order = 0;
 					wait = 4 + random() % 4;
+
+					vector2f new_target = main_player.get_pos();
 
 					new_target.x += target.x;
 					new_target.y += target.y;	
@@ -97,24 +146,34 @@ void Slime::update(float current_time, vector2f new_target, float delta_time
 					max_move.x = abs(core.x - new_target.x);
 					max_move.y = abs(core.y - new_target.y);
 					break;
+				}
 				case 2:
 					state = 1;
 					order = 0;
-					wait = 4 + random() % 8;
+					wait = 4 + random() % 4;
 					break;
 				case 3:
 					state = 1;
 					order = 0;
 					wait = 4 + random() % 4;
 					break;
+				case 4:
+					state = 1;
+					order = 0;
+					wait = 1 + random() % 4;
+					break;
+				case 5:
+					break;
 			}
 		}
 		
 	}
 
+
 	switch(state)
 	{
 		case 0:
+			set_sprite(vector2f(0, order));
 			break;
 		case 1:
 			set_sprite(vector2f(0, 4 + order));
@@ -130,6 +189,9 @@ void Slime::update(float current_time, vector2f new_target, float delta_time
 			max_move.x -= current_move.x;
 			max_move.y -= current_move.y;
 
+			//cout << current_move.x << " " << current_move.y
+			//<< direction.x << " " << direction.y << endl;
+
 			move_x(current_move.x * direction.x, hitbox);
 			move_y(current_move.y * direction.y, hitbox);
 
@@ -141,6 +203,10 @@ void Slime::update(float current_time, vector2f new_target, float delta_time
 			set_sprite(vector2f(0, 12 + order));
 			break;
 		case 4:
+			set_sprite(vector2f(0, 20 + order));
+			break;
+		case 5:
+			set_sprite(vector2f(0, 24 + order));
 			break;
 			
 	}
@@ -149,10 +215,13 @@ void Slime::update(float current_time, vector2f new_target, float delta_time
 	{
 		last_update = current_time;
 		wait--;
+		if(order == 3 && state == 5)
+			order--;
 		order++;
 		switch(state)
 		{
 			case 0: // spawn
+				order %= 4;
 				break;
 			case 1: // idle
 				order %= 4;
@@ -164,8 +233,10 @@ void Slime::update(float current_time, vector2f new_target, float delta_time
 				order %= 8;
 				break;
 			case 4: // hit
+				order %= 4;
 				break;
 			case 5: // death
+				order %= 4;
 				break;
 		}
 	}
