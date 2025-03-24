@@ -65,7 +65,7 @@ void Player::update(float current_time, bool is_attack, float delta_time)
 		for(auto &e: enemies)
 			if(e->is_attack())
 			{
-				SDL_Rect e_hitbox = e->get_hitbox();
+				SDL_Rect e_hitbox = e->get_attack_hitbox();
 				if(SDL_HasIntersection(&hitbox, &e_hitbox))
 				{
 					int damage_taken = 2 + random() % 2;

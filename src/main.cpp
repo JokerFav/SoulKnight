@@ -70,6 +70,8 @@ int main(int argc, char* argv[])
 		{
 			if(Slime* enemy = dynamic_cast<Slime*>(e))
 				enemy->update(current_time, delta_time);
+			if(Troll* enemy = dynamic_cast<Troll*>(e))
+				enemy->update(current_time, delta_time);
 		}
 
 		for(int i = 0; i < (int)enemies.size(); i++)

@@ -31,7 +31,7 @@ bool Sword::is_attack()
 	return (state > 0);
 }
 
-SDL_Rect Sword::get_attack_hitbox()
+SDL_Rect Sword::set_attack_hitbox()
 {
 	SDL_Rect attack_hitbox = SDL_Rect{0, 0, 0, 0};
 	switch(state)
@@ -48,7 +48,6 @@ SDL_Rect Sword::get_attack_hitbox()
 
 void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 {
-	cout << main_player.is_death() << endl;
 	if(main_player.is_death())
 	{
 		state = 0;
