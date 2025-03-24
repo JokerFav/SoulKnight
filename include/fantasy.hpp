@@ -8,7 +8,7 @@ class Sword : public Entity
 public:
 	Sword();
 	void sword_render();
-	bool is_attacking();
+	bool is_attack();
 	SDL_Rect get_attack_hitbox();
 	void attack(float now, vector2f player_pos, SDL_RendererFlip player_flip);
 private:

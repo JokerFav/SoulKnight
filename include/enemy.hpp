@@ -8,12 +8,12 @@ class Enemy : public Entity
 public:
 	virtual ~Enemy() = default;
 	bool is_death();
+	bool is_attack();
 	Enemy(vector2f spawn_point, SDL_Rect new_sprite);
 protected:
-	int health_point, state, order, wait, speed;
-	SDL_Rect hitbox;
+	int wait;
 	vector2f target;
-	bool spawned, death;
+	bool spawned, death, attack;
 };
 
 class Slime : public Enemy 

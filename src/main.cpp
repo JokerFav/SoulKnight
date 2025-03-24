@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 
 
-		main_player.update(current_time, sword.is_attacking(), delta_time);
+		main_player.update(current_time, sword.is_attack(), delta_time);
 		sword.attack(current_time, main_player.get_pos(), main_player.get_flip());
 
 

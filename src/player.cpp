@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "enemy.hpp"
 using namespace std;
 
 Player main_player;
@@ -9,6 +10,7 @@ Player::Player():
 	texture = main_window.load_texture("res/player.png");
 	order = 0;
 	state = 0;
+	wait = 0;
 	last_update = 0;
 	health_point = 12;
 	speed = 60;
@@ -21,8 +23,12 @@ void Player::player_render()
 	player_pos.w = player_pos.h = 32;
 	player_pos.x = pos.x - camera.x;
 	player_pos.y = pos.y - camera.y;
-	SDL_RenderCopyEx(main_window.renderer, get_tex(), &player_sprite, &player_pos, 0, NULL, 
-		get_flip());
+	SDL_RenderCopyEx(main_window.renderer, get_tex(), &player_sprite, &player_pos, 0, NULL, get_flip());
+}
+
+bool Player::is_death()
+{
+	return (state == 3);
 }
 
 void Player::camera_update()
@@ -35,7 +41,7 @@ void Player::camera_update()
 
 SDL_Rect Player::get_leg_rect()
 {
-	SDL_Rect l_rect; // go chicken go uuuuuuuuuuuuu
+	SDL_Rect l_rect;
 	l_rect.x = pos.x + 9;
 	l_rect.y = pos.y + 26;
 	l_rect.w = 13;
@@ -43,56 +49,116 @@ SDL_Rect Player::get_leg_rect()
 	return l_rect;
 }
 
-SDL_Rect Player::get_hitbox()
+void Player::update(float current_time, bool is_attack, float delta_time)
 {
+	if(state == 3 && wait == 0) return;
 	hitbox.x = (int)pos.x + 8;
 	hitbox.y = (int)pos.y + 10;
 	hitbox.w = 15;
 	hitbox.h = 20;
-	return hitbox;
-}
-
-void Player::update(float current_time, bool is_attacking, float delta_time)
-{
 	const Uint8* key = SDL_GetKeyboardState(NULL);
-	state = 0;
-	if(key[SDL_SCANCODE_W])
+
+
+	if(wait == 0)
 	{
-		move_y(-speed * delta_time, get_leg_rect());
-		state = 1;
-	}
-	if(key[SDL_SCANCODE_S])
-	{
-		move_y(speed * delta_time, get_leg_rect());
-		state = 1;
-	}
-	if(key[SDL_SCANCODE_A])
-	{
-		move_x(-speed * delta_time, get_leg_rect());
-		state = 1;
-		if(!is_attacking)
-			set_flip(SDL_FLIP_HORIZONTAL);
-	}
-	if(key[SDL_SCANCODE_D])
-	{
-		move_x(speed * delta_time, get_leg_rect());
-		state = 1;
-		if(!is_attacking) 
-			set_flip(SDL_FLIP_NONE);
+		bool is_hit = false;
+		for(auto &e: enemies)
+			if(e->is_attack())
+			{
+				SDL_Rect e_hitbox = e->get_hitbox();
+				if(SDL_HasIntersection(&hitbox, &e_hitbox))
+				{
+					int damage_taken = 2 + random() % 2;
+					health_point -= damage_taken;
+					is_hit = true;
+
+					if(e_hitbox.x >= hitbox.x)
+						direction.x = -1;
+					else direction.x = 1;
+					if(e_hitbox.y >= hitbox.y)
+						direction.y = -1;
+					else direction.y = 1;
+					break;
+				}
+			}
+		if(is_hit)
+		{
+			order = 0;
+			wait = 4;
+			if(health_point > 0) 
+			{
+				state = 2;
+				wait = 4;
+			}
+			else 
+			{
+				state = 3;
+				wait = 200;
+			}
+		}
+		else
+		{
+			wait = 1;
+			if(key[SDL_SCANCODE_W] ||
+				key[SDL_SCANCODE_S] ||
+				key[SDL_SCANCODE_A] ||
+				key[SDL_SCANCODE_D])
+				state = 1;
+			else state = 0;
+		}
 	}
 
-	set_sprite(vector2f(0, state * 4 + order));
+	switch(state)
+	{
+		case 0:
+			set_sprite(vector2f(0, order));
+			break;
+		case 1:
+			set_sprite(vector2f(0, 4 + order));
+			if(key[SDL_SCANCODE_W]) 
+				move_y(-speed * delta_time, get_leg_rect());
+			if(key[SDL_SCANCODE_S]) 
+				move_y(speed * delta_time, get_leg_rect());
+			if(key[SDL_SCANCODE_A])
+			{
+				move_x(-speed * delta_time, get_leg_rect());
+				if(!is_attack) 
+					set_flip(SDL_FLIP_HORIZONTAL);
+			}
+			if(key[SDL_SCANCODE_D])
+			{
+				move_x(speed * delta_time, get_leg_rect());
+				if(!is_attack) 
+					set_flip(SDL_FLIP_NONE);
+			}
+			break;
+		case 2:
+			set_sprite(vector2f(0, 12 + order));
+			move_x(speed * delta_time * direction.x * 1.5f, get_leg_rect());
+			move_y(speed * delta_time * direction.y * 0.7f, get_leg_rect());
+			break;
+		case 3:
+			set_sprite(vector2f(0, 16 + order));
+			break;
+	}
 
 	if(current_time - last_update > 0.1f)
 	{
 		last_update = current_time;
+		order++;
+		if(state == 3 && order == 4) order--;
+		wait--;
 		switch(state)
 		{
 			case 0: // idle
-				order = (order + 1) % 4;
+				order %= 4;
 				break;
 			case 1: // run
-				order = (order + 1) % 8;
+				order %= 8;
+				break;
+			case 2: // hit
+				break;
+			case 3: // death
 				break;
 		}
 	}

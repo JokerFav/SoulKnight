@@ -9,11 +9,13 @@ class Player : public Entity
 public:
 	Player();
 	void player_render();
-	SDL_Rect get_hitbox();
-	void update(float current_time, bool is_attacking, float delta_time);
+	void update(float current_time, bool is_attack, float delta_time);
 	void camera_update();
+	bool is_death();
 	SDL_Rect get_leg_rect();
 private:
+	int wait;
+	vector2f direction;
 	//real hitbox = +8, +10, 15, 20
 };
 

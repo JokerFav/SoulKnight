@@ -48,6 +48,11 @@ vector2f Entity::get_pos()
 	return pos;
 }
 
+SDL_Rect Entity::get_hitbox()
+{
+	return hitbox;
+}
+
 void Entity::set_flip(SDL_RendererFlip new_flip)
 {
 	flip = new_flip;
@@ -70,22 +75,26 @@ bool Entity::collision_detection(SDL_Rect x, vector<SDL_Rect>& y)
 void Entity::move_x(float speed, SDL_Rect l_rect)
 {
 	pos.x += speed;
-	l_rect.x += max(round(speed), (speed > 0.0f ? 1.0f : -1.0f));
+	if(round(speed) == 0.0f)
+		l_rect.x += (speed > 0.0f ? 1 : -1);
+	else l_rect.x += round(speed);
 	if(collision_detection(l_rect, map_tiles))
 	{
 		pos.x -= speed;
-		//cout << "collision detected on x-axis" << endl;
+		cout << "collision detected on x-axis" << endl;
 	}
 }
 
 void Entity::move_y(float speed, SDL_Rect l_rect)
 {
 	pos.y += speed;
-	l_rect.y += max(round(speed), (speed > 0.0f ? 1.0f : -1.0f));
+	if(round(speed) == 0.0f)
+		l_rect.y += (speed > 0.0f ? 1 : -1);
+	else l_rect.y += round(speed);
 	if(collision_detection(l_rect, map_tiles))
 	{
 		pos.y -= speed;
-		//cout << "collision detected on y-axis " << l_rect.y << endl;
+		cout << "collision detected on y-axis " << l_rect.y << endl;
 	}
 }
 

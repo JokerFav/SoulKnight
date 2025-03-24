@@ -16,12 +16,22 @@ Enemy::Enemy(vector2f spawn_point, SDL_Rect new_sprite):
 	target.y = 18 + random() % 4;
 }
 
+bool Enemy::is_death()
+{
+	return death;
+}
+
+bool Enemy::is_attack()
+{
+	return attack;
+}
+
 Slime::Slime(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 32, 32})
 {
 	health_point = 5;
 	speed = 15;
-	state = 1;
+	state = 0;
 	wait = 2;
 	order = 0;
 	texture = main_window.load_texture("res/slimeball.png");// 15 -> 18
@@ -57,11 +67,6 @@ SDL_Rect Slime::get_attack_hitbox()
 	return current_hitbox;
 }
 
-bool Enemy::is_death()
-{
-	return death;
-}
-
 void Slime::update(float current_time, float delta_time)
 {
 	if(wait == 0 && state == 5) 
@@ -73,6 +78,7 @@ void Slime::update(float current_time, float delta_time)
 	vector2f core(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2);
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.get_attack_hitbox();
+	attack = false;
 
 	if(!spawned)
 	{
@@ -88,7 +94,7 @@ void Slime::update(float current_time, float delta_time)
 		else return;
 	}
 
-	if(sword.is_attacking() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
+	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
 		&& ((state > 0 && state < 4) || (state == 4 && wait == 0)))
 	{
 		state = 4;
@@ -205,6 +211,7 @@ void Slime::update(float current_time, float delta_time)
 			break;
 		case 3:
 			set_sprite(vector2f(0, 12 + order));
+			attack = (order > 2 && order < 7);
 			break;
 		case 4:
 			set_sprite(vector2f(0, 20 + order));

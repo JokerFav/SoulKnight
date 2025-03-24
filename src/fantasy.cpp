@@ -1,4 +1,5 @@
 #include "fantasy.hpp"
+#include "player.hpp"
 using namespace std;
 
 Sword sword;
@@ -25,7 +26,7 @@ void Sword::sword_render()
 		NULL, get_flip());
 }
 
-bool Sword::is_attacking()
+bool Sword::is_attack()
 {
 	return (state > 0);
 }
@@ -47,6 +48,13 @@ SDL_Rect Sword::get_attack_hitbox()
 
 void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 {
+	cout << main_player.is_death() << endl;
+	if(main_player.is_death())
+	{
+		state = 0;
+		set_sprite(vector2f(0, 1));
+		return;
+	}
 	if(player_flip == SDL_FLIP_NONE)
 	{
 		if(order == 4)
