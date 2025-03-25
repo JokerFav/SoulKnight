@@ -53,6 +53,11 @@ SDL_Rect Entity::get_hitbox()
 	return hitbox;
 }
 
+float Entity::get_y()
+{
+	return pos.y + sprite.h;
+}
+
 void Entity::set_flip(SDL_RendererFlip new_flip)
 {
 	flip = new_flip;

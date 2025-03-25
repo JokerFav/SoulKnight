@@ -13,6 +13,7 @@ public:
 	void camera_update();
 	bool is_death();
 	SDL_Rect get_leg_rect();
+	float get_y();
 private:
 	int wait;
 	vector2f direction;

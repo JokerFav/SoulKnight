@@ -3,32 +3,21 @@
 #include "Window.hpp"
 using namespace std;
 
+extern vector<Entity*> objects;
 
-class Object
+void spawn_objects();
+
+class Wall : public Entity
 {
 public:
-	Object(SDL_Texture* new_tex);
-	void render_behind(float y);
-	void render_front(float y);
-protected: 
-	vector <vector2f> pos;
-	vector <int> order;
-	SDL_Texture* tex;
-	vector <SDL_Rect> tiles;
+	Wall(vector2f spawn_point, SDL_Rect new_sprite);
 };
 
-class Wall : public Object
+class Decorations : public Entity 
 {
 public:
-	Wall();
+	Decorations(vector2f spawn_point, SDL_Rect new_sprite);
 };
-
-class Decorations : public Object 
-{
-public:
-	Decorations();
-};
-
 
 
 

@@ -11,12 +11,14 @@ int main(int argc, char* argv[])
 	main_window.before_render();
 	Map main_map;
 	main_map.map_init();
-	Wall main_wall;
-	Decorations decor;
 	
 	spawn_enemies();
 
-
+	spawn_objects();
+	sort(objects.begin(), objects.end(), [](Entity* a, Entity* b)
+	{
+		return a->get_y() < b->get_y();
+	});
 
 
 
@@ -46,35 +48,18 @@ int main(int argc, char* argv[])
 			/ (float)SDL_GetPerformanceFrequency();
 		last_counter = current_counter;
 
-
-
 		main_player.update(current_time, sword.is_attack(), delta_time);
 		sword.attack(current_time, main_player.get_pos(), main_player.get_flip());
 
-
-
-
-
-
-
-
-		main_map.map_render();
-		decor.render_behind(main_player.get_leg_rect().y);
-		main_wall.render_behind(main_player.get_leg_rect().y);
-		sword.sword_render();
-		main_player.player_render();
-		decor.render_front(main_player.get_leg_rect().y);
-		main_wall.render_front(main_player.get_leg_rect().y);	
-
 		for(Enemy *e: enemies)
-		{
-			if(Slime* enemy = dynamic_cast<Slime*>(e))
-				enemy->update(current_time, delta_time);
-			if(Troll* enemy = dynamic_cast<Troll*>(e))
-				enemy->update(current_time, delta_time);
-			if(Orc* enemy = dynamic_cast<Orc*>(e))
-				enemy->update(current_time, delta_time);
-		}
+			{
+				if(Slime* enemy = dynamic_cast<Slime*>(e))
+					enemy->update(current_time, delta_time);
+				if(Troll* enemy = dynamic_cast<Troll*>(e))
+					enemy->update(current_time, delta_time);
+				if(Orc* enemy = dynamic_cast<Orc*>(e))
+					enemy->update(current_time, delta_time);
+			}
 
 		for(int i = 0; i < (int)enemies.size(); i++)
 			if((*enemies[i]).is_death())
@@ -84,7 +69,45 @@ int main(int argc, char* argv[])
 				i--;
 			}
 
-		for(Enemy *e: enemies) main_window.render_entity(*e);
+		sort(enemies.begin(), enemies.end(), [](Enemy* a, Enemy* b)
+		{
+			return a->get_y() < b->get_y();
+		});
+
+		main_map.map_render();	
+
+		bool r_player = 0;
+		int lo = 0;
+		for(Enemy *e: enemies) 
+		{
+			if(!r_player && e->get_y() >= main_player.get_y())
+			{
+				sword.sword_render();
+				main_player.player_render();
+				r_player = 1;
+			}
+			while(lo < (int)objects.size() && objects[lo]->get_y() <= e->get_y())
+			{
+				main_window.render_entity(*objects[lo]);
+				lo++;
+			}
+			main_window.render_entity(*e);
+		}
+		if(!r_player)
+		{
+			while(lo < (int)objects.size() && objects[lo]->get_y() <= main_player.get_y())
+			{
+				main_window.render_entity(*objects[lo]);
+				lo++;
+			}
+			sword.sword_render();
+			main_player.player_render();
+		}
+		while(lo < (int)objects.size())
+		{
+			main_window.render_entity(*objects[lo]);
+			lo++;
+		}
 
 
 		main_window.present();

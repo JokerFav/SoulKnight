@@ -16,6 +16,7 @@ public:
 	SDL_Rect get_sprite();
 	vector2f get_pos();
 	SDL_Rect get_hitbox();
+	virtual float get_y();
 	void set_flip(SDL_RendererFlip new_flip);
 	void set_sprite(vector2f new_pos);
 	bool collision_detection(SDL_Rect x, vector<SDL_Rect>& y);

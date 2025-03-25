@@ -10,6 +10,8 @@ public:
 	bool is_death();
 	bool is_attack();
 	SDL_Rect get_attack_hitbox();
+	virtual SDL_Rect get_leg_rect() {return SDL_Rect{0, 0, 0, 0};}
+	float get_y();
 	Enemy(vector2f spawn_point, SDL_Rect new_sprite);
 protected:
 	int wait;

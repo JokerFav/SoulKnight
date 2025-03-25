@@ -31,6 +31,11 @@ SDL_Rect Enemy::get_attack_hitbox()
 	return real_attack_hitbox;
 }
 
+float Enemy::get_y()
+{
+	return get_leg_rect().y + get_leg_rect().h;
+}
+
 void spawn_enemies()
 {
 	//enemies.push_back(new Slime(vector2f(231, 63)));
