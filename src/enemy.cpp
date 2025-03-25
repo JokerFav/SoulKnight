@@ -33,8 +33,9 @@ SDL_Rect Enemy::get_attack_hitbox()
 
 void spawn_enemies()
 {
-	enemies.push_back(new Slime(vector2f(231, 63)));
-	enemies.push_back(new Troll(vector2f(313, 63)));
+	//enemies.push_back(new Slime(vector2f(231, 63)));
+	//enemies.push_back(new Troll(vector2f(313, 63)));
+	enemies.push_back(new Orc(vector2f(423, 50)));
 }
 
 Slime::Slime(vector2f spawn_point):
@@ -461,6 +462,227 @@ void Troll::update(float current_time, float delta_time)
 				break;
 			case 3: // attack
 				order %= 4;
+				break;
+			case 4: // hit
+				order %= 4;
+				break;
+			case 5: // death
+				order %= 4;
+				break;
+		}
+	}
+}
+
+Orc::Orc(vector2f spawn_point):
+	Enemy(spawn_point, {0, 0, 96, 64})
+{
+	health_point = 20;
+	speed = 15;
+	state = 0;
+	wait = 0;
+	order = 0;
+	texture = main_window.load_texture("res/orc.png");
+}
+
+SDL_Rect Orc::set_attack_hitbox()
+{
+	SDL_Rect current_hitbox = hitbox;
+	if(state == 3)
+	{
+		switch(order)
+		{
+			case 1:
+				current_hitbox = SDL_Rect{23 + (int)pos.x, 13 + (int)pos.y, 40, 18};
+				break;
+			case 2:
+				current_hitbox = SDL_Rect{47 + (int)pos.x, 13 + (int)pos.y, 34, 40};
+				break;
+			case 3:
+				current_hitbox = SDL_Rect{53 + (int)pos.x, 24 + (int)pos.y, 12, 29};
+				break;
+			case 4:
+				current_hitbox = SDL_Rect{53 + (int)pos.x, 24 + (int)pos.y, 12, 29};
+				break;
+		}
+	}
+	return current_hitbox;
+}
+
+
+void Orc::update(float current_time, float delta_time)
+{
+	if(wait == 0 && state == 5) 
+	{
+		death = true;
+		return;
+	}
+	hitbox = SDL_Rect{33 + (int)pos.x, 21 + (int)pos.y, 24, 33};
+	real_attack_hitbox = set_attack_hitbox();
+	vector2f core(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2);
+	SDL_Rect player_hitbox = main_player.get_hitbox();
+	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
+	attack = false;
+
+	if(!spawned)
+	{
+		if( hitbox.x >= camera.x &&
+		hitbox.y >= camera.y &&
+		hitbox.x + hitbox.w <= camera.x + camera.w &&
+		hitbox.y + hitbox.h <= camera.y + camera.h)
+		{
+			spawned = true;
+			state = 1;
+			order = 0;
+			wait = 4;
+		}
+		else return;
+	}
+
+	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
+		&& (state < 4 || (state == 4 && wait == 0)))
+	{
+		state = 4;
+		order = 1;
+		wait = 4;
+		health_point--;
+		if(main_player.get_flip() == SDL_FLIP_NONE)
+			direction.x = 1;
+		else direction.x = -1;
+		direction.x /= 4;
+		direction.y = 1.0f / (1 + random() % 5);
+	}
+
+	if(health_point == 0)
+	{
+		health_point--;
+		state = 5;
+		order = 0;
+		wait = 10;
+	}
+
+	if(state == 2)
+	{
+		if(max_move.x <= 0.0f && max_move.y <= 0.0f) wait = 0;
+		if(SDL_HasIntersection(&hitbox, &player_hitbox) == SDL_TRUE) wait = 0;
+	}
+
+
+	if(wait == 0)
+	{
+		if(SDL_HasIntersection(&hitbox, &player_hitbox)) // in attack range
+			{
+				state = 3;
+				order = 0;
+				wait = 6;
+			}
+		else 
+		{
+			switch(state)
+			{
+				case 0:
+					break;
+				case 1:
+				{
+					state = 2;
+					order = 0;
+					wait = 8 + random() % 4;
+
+					vector2f new_target = main_player.get_pos();
+
+					new_target.x += target.x;
+					new_target.y += target.y;	
+
+					direction.x = (core.x <= new_target.x ? 1 : -1);
+					direction.y = (core.y <= new_target.y ? 1 : -1);
+
+					max_move.x = abs(core.x - new_target.x);
+					max_move.y = abs(core.y - new_target.y);
+					break;
+				}
+				case 2:
+					state = 1;
+					order = 0;
+					wait = 1 + random() % 4;
+					break;
+				case 3:
+					state = 1;
+					order = 0;
+					wait = 4 + random() % 4;
+					break;
+				case 4:
+					state = 1;
+					order = 0;
+					wait = 1 + random() % 4;
+					break;
+				case 5:
+					break;
+			}
+		}
+		
+	}
+
+
+	switch(state)
+	{
+		case 0:
+			break;
+		case 1:
+			set_sprite(vector2f(0, order));
+			break;
+		case 2:
+			set_sprite(vector2f(1, order));
+
+			if(max_move.x > 0.0f) current_move.x = speed * delta_time;
+			else current_move.x = 0;
+			if(max_move.y > 0.0f) current_move.y = speed * delta_time;
+			else current_move.y = 0;
+
+			max_move.x -= current_move.x;
+			max_move.y -= current_move.y;
+
+			move_x(current_move.x * direction.x, hitbox);
+			move_y(current_move.y * direction.y, hitbox);
+
+			if(direction.x == 1) set_flip(SDL_FLIP_NONE);
+			else set_flip(SDL_FLIP_HORIZONTAL);
+
+			break;
+		case 3:
+			set_sprite(vector2f(2, order));
+			if(player_hitbox.x > hitbox.x) set_flip(SDL_FLIP_NONE);
+			else set_flip(SDL_FLIP_HORIZONTAL);
+			attack = (order > 0 && order < 5);
+			break;
+		case 4:
+			set_sprite(vector2f(3, order));
+			move_x(speed * 2.0f * delta_time * direction.x, hitbox);
+			move_y(speed * 1.5f * delta_time * direction.y, hitbox);
+			break;
+		case 5:
+			set_sprite(vector2f(4, order));
+			break;
+			
+	}
+
+	if(current_time - last_update > 0.15f)
+	{
+		last_update = current_time;
+		wait--;
+		if(order == 3 && state == 5)
+			order--;
+		order++;
+		switch(state)
+		{
+			case 0: // spawn
+				break;
+			case 1: // idle
+				order %= 4;
+				break;
+			case 2: // move
+				order %= 4;
+				break;
+			case 3: // attack
+				order %= 6;
 				break;
 			case 4: // hit
 				order %= 4;

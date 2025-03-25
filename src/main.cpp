@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
 				enemy->update(current_time, delta_time);
 			if(Troll* enemy = dynamic_cast<Troll*>(e))
 				enemy->update(current_time, delta_time);
+			if(Orc* enemy = dynamic_cast<Orc*>(e))
+				enemy->update(current_time, delta_time);
 		}
 
 		for(int i = 0; i < (int)enemies.size(); i++)

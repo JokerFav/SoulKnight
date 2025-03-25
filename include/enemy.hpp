@@ -43,6 +43,17 @@ public:
 private:
 	vector2f direction;
 	vector2f max_move, current_move;
+};
+
+class Orc : public Enemy 
+{
+public:
+	Orc(vector2f spawn_point);
+	SDL_Rect set_attack_hitbox();
+	void update(float current_time, float delta_time);
+private:
+	vector2f direction;
+	vector2f max_move, current_move;
 	SDL_Rect attack_hitbox[4];
 };
 
