@@ -27,6 +27,7 @@ class Slime : public Enemy
 public:
 	Slime(vector2f spawn_point);
 	SDL_Rect set_attack_hitbox();
+	SDL_Rect get_leg_rect();
 	void update(float current_time, float delta_time);
 private:
 	vector2f direction;
@@ -39,6 +40,7 @@ class Troll : public Enemy
 public:
 	Troll(vector2f spawn_point);
 	SDL_Rect set_attack_hitbox();
+	SDL_Rect get_leg_rect();
 	void update(float current_time, float delta_time);
 private:
 	vector2f direction;
@@ -50,6 +52,7 @@ class Orc : public Enemy
 public:
 	Orc(vector2f spawn_point);
 	SDL_Rect set_attack_hitbox();
+	SDL_Rect get_leg_rect();
 	void update(float current_time, float delta_time);
 private:
 	vector2f direction;

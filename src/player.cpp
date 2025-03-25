@@ -66,6 +66,14 @@ void Player::update(float current_time, bool is_attack, float delta_time)
 			if(e->is_attack())
 			{
 				SDL_Rect e_hitbox = e->get_attack_hitbox();
+				/*if(e_hitbox.w == 34 && e_hitbox.h == 40)
+				{
+					cout << e_hitbox.x << " " << e_hitbox.y << " "
+					<< e_hitbox.w << " " << e_hitbox.h << endl;
+
+					cout << hitbox.x << " " << hitbox.y << " "
+					<< hitbox.w << " " << hitbox.h << endl;
+				}*/
 				if(SDL_HasIntersection(&hitbox, &e_hitbox))
 				{
 					int damage_taken = 2 + random() % 2;

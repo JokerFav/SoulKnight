@@ -79,6 +79,11 @@ SDL_Rect Slime::set_attack_hitbox()
 	return current_hitbox;
 }
 
+SDL_Rect Slime::get_leg_rect()
+{
+	return SDL_Rect{11 + (int)pos.x, 26 + (int)pos.y, 10, 2};
+}
+
 void Slime::update(float current_time, float delta_time)
 {
 	if(wait == 0 && state == 5) 
@@ -211,8 +216,8 @@ void Slime::update(float current_time, float delta_time)
 			max_move.x -= current_move.x;
 			max_move.y -= current_move.y;
 
-			move_x(current_move.x * direction.x, hitbox);
-			move_y(current_move.y * direction.y, hitbox);
+			move_x(current_move.x * direction.x, get_leg_rect());
+			move_y(current_move.y * direction.y, get_leg_rect());
 
 			if(direction.x == 1) set_flip(SDL_FLIP_NONE);
 			else set_flip(SDL_FLIP_HORIZONTAL);
@@ -224,8 +229,8 @@ void Slime::update(float current_time, float delta_time)
 			break;
 		case 4:
 			set_sprite(vector2f(0, 20 + order));
-			move_x(speed * 2.0f * delta_time * direction.x, hitbox);
-			move_y(speed * 1.5f * delta_time * direction.y, hitbox);
+			move_x(speed * 2.0f * delta_time * direction.x, get_leg_rect());
+			move_y(speed * 1.5f * delta_time * direction.y, get_leg_rect());
 			break;
 		case 5:
 			set_sprite(vector2f(0, 24 + order));
@@ -288,6 +293,10 @@ SDL_Rect Troll::set_attack_hitbox()
 	return current_hitbox;
 }
 
+SDL_Rect Troll::get_leg_rect()
+{
+	return SDL_Rect{11 + (int)pos.x, 26 + (int)pos.y, 10, 2};
+}
 
 void Troll::update(float current_time, float delta_time)
 {
@@ -419,8 +428,8 @@ void Troll::update(float current_time, float delta_time)
 			max_move.x -= current_move.x;
 			max_move.y -= current_move.y;
 
-			move_x(current_move.x * direction.x, hitbox);
-			move_y(current_move.y * direction.y, hitbox);
+			move_x(current_move.x * direction.x, get_leg_rect());
+			move_y(current_move.y * direction.y, get_leg_rect());
 
 			if(direction.x == 1) set_flip(SDL_FLIP_NONE);
 			else set_flip(SDL_FLIP_HORIZONTAL);
@@ -434,8 +443,8 @@ void Troll::update(float current_time, float delta_time)
 			break;
 		case 4:
 			set_sprite(vector2f(0, 16 + order));
-			move_x(speed * 2.0f * delta_time * direction.x, hitbox);
-			move_y(speed * 1.5f * delta_time * direction.y, hitbox);
+			move_x(speed * 2.0f * delta_time * direction.x, get_leg_rect());
+			move_y(speed * 1.5f * delta_time * direction.y, get_leg_rect());
 			break;
 		case 5:
 			set_sprite(vector2f(0, 20 + order));
@@ -476,7 +485,7 @@ void Troll::update(float current_time, float delta_time)
 Orc::Orc(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 96, 64})
 {
-	health_point = 20;
+	health_point = 12;
 	speed = 15;
 	state = 0;
 	wait = 0;
@@ -492,22 +501,38 @@ SDL_Rect Orc::set_attack_hitbox()
 		switch(order)
 		{
 			case 1:
-				current_hitbox = SDL_Rect{23 + (int)pos.x, 13 + (int)pos.y, 40, 18};
+				if(get_flip() == SDL_FLIP_NONE)
+					current_hitbox = SDL_Rect{23 + (int)pos.x, 13 + (int)pos.y, 40, 18};
+				else 
+					current_hitbox = SDL_Rect{33 + (int)pos.x, 13 + (int)pos.y, 40, 18};
 				break;
 			case 2:
-				current_hitbox = SDL_Rect{47 + (int)pos.x, 13 + (int)pos.y, 34, 40};
+				if(get_flip() == SDL_FLIP_NONE)
+					current_hitbox = SDL_Rect{47 + (int)pos.x, 13 + (int)pos.y, 34, 40};
+				else 
+					current_hitbox = SDL_Rect{15 + (int)pos.x, 13 + (int)pos.y, 34, 40};
 				break;
 			case 3:
-				current_hitbox = SDL_Rect{53 + (int)pos.x, 24 + (int)pos.y, 12, 29};
+				if(get_flip() == SDL_FLIP_NONE)
+					current_hitbox = SDL_Rect{53 + (int)pos.x, 24 + (int)pos.y, 12, 29};
+				else 
+					current_hitbox = SDL_Rect{15 + (int)pos.x, 24 + (int)pos.y, 12, 29};
 				break;
 			case 4:
-				current_hitbox = SDL_Rect{53 + (int)pos.x, 24 + (int)pos.y, 12, 29};
+				if(get_flip() == SDL_FLIP_NONE)
+					current_hitbox = SDL_Rect{53 + (int)pos.x, 30 + (int)pos.y, 12, 23};
+				else 
+					current_hitbox = SDL_Rect{15 + (int)pos.x, 30 + (int)pos.y, 12, 23};
 				break;
 		}
 	}
 	return current_hitbox;
 }
 
+SDL_Rect Orc::get_leg_rect()
+{
+	return SDL_Rect{33 + (int)pos.x, 50 + (int)pos.y, 22, 5};
+}
 
 void Orc::update(float current_time, float delta_time)
 {
@@ -640,8 +665,8 @@ void Orc::update(float current_time, float delta_time)
 			max_move.x -= current_move.x;
 			max_move.y -= current_move.y;
 
-			move_x(current_move.x * direction.x, hitbox);
-			move_y(current_move.y * direction.y, hitbox);
+			move_x(current_move.x * direction.x, get_leg_rect());
+			move_y(current_move.y * direction.y, get_leg_rect());
 
 			if(direction.x == 1) set_flip(SDL_FLIP_NONE);
 			else set_flip(SDL_FLIP_HORIZONTAL);
@@ -655,8 +680,8 @@ void Orc::update(float current_time, float delta_time)
 			break;
 		case 4:
 			set_sprite(vector2f(3, order));
-			move_x(speed * 2.0f * delta_time * direction.x, hitbox);
-			move_y(speed * 1.5f * delta_time * direction.y, hitbox);
+			move_x(speed * 2.0f * delta_time * direction.x, get_leg_rect());
+			move_y(speed * 1.5f * delta_time * direction.y, get_leg_rect());
 			break;
 		case 5:
 			set_sprite(vector2f(4, order));
