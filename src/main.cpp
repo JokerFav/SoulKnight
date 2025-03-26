@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 		return a->get_y() < b->get_y();
 	});
 
-
+	set_health_bar();
 
 
 	
@@ -48,9 +48,19 @@ int main(int argc, char* argv[])
 			/ (float)SDL_GetPerformanceFrequency();
 		last_counter = current_counter;
 
-		main_player.update(current_time, sword.is_attack(), delta_time);
+		main_player.update(current_time, sword.is_attack(), delta_time, rooms[0]);
 		sword.attack(current_time, main_player.get_pos(), main_player.get_flip());
+		for(int i = 0; i < (int)health_bar.size(); ++i)
+		{
+			if(main_player.get_health() <= i * 2) 
+				health_bar[i]->update(2);
+			if(main_player.get_health() == i * 2 + 1)
+				health_bar[i]->update(1);
+			if(main_player.get_health() >= (i + 1) * 2)
+				health_bar[i]->update(0);
+		}
 
+		/*
 		for(Enemy *e: enemies)
 			{
 				if(Slime* enemy = dynamic_cast<Slime*>(e))
@@ -68,31 +78,54 @@ int main(int argc, char* argv[])
 				enemies.pop_back();
 				i--;
 			}
+		*/
+
+		for(Enemy *e: rooms[0])
+			{
+				if(Slime* enemy = dynamic_cast<Slime*>(e))
+					enemy->update(current_time, delta_time);
+				if(Troll* enemy = dynamic_cast<Troll*>(e))
+					enemy->update(current_time, delta_time);
+				if(Orc* enemy = dynamic_cast<Orc*>(e))
+					enemy->update(current_time, delta_time);
+			}
+
+		for(int i = 0; i < (int)rooms[0].size(); i++)
+			if((*rooms[0][i]).is_death())
+			{
+				swap(rooms[0][i], rooms[0].back());
+				rooms[0].pop_back();
+				i--;
+			}
+
+
+
+		main_map.map_render();	
+		/*
+		bool r_player = 0;
+		int lo = 0;
 
 		sort(enemies.begin(), enemies.end(), [](Enemy* a, Enemy* b)
 		{
 			return a->get_y() < b->get_y();
 		});
 
-		main_map.map_render();	
-
-		bool r_player = 0;
-		int lo = 0;
 		for(Enemy *e: enemies) 
-		{
-			if(!r_player && e->get_y() >= main_player.get_y())
+			if(e->is_spawn())
 			{
-				sword.sword_render();
-				main_player.player_render();
-				r_player = 1;
+				if(!r_player && e->get_y() >= main_player.get_y())
+				{
+					sword.sword_render();
+					main_player.player_render();
+					r_player = 1;
+				}
+				while(lo < (int)objects.size() && objects[lo]->get_y() <= e->get_y())
+				{
+					main_window.render_entity(*objects[lo]);
+					lo++;
+				}
+				main_window.render_entity(*e);
 			}
-			while(lo < (int)objects.size() && objects[lo]->get_y() <= e->get_y())
-			{
-				main_window.render_entity(*objects[lo]);
-				lo++;
-			}
-			main_window.render_entity(*e);
-		}
 		if(!r_player)
 		{
 			while(lo < (int)objects.size() && objects[lo]->get_y() <= main_player.get_y())
@@ -108,6 +141,50 @@ int main(int argc, char* argv[])
 			main_window.render_entity(*objects[lo]);
 			lo++;
 		}
+		*/
+
+		bool r_player = 0;
+		int lo = 0;
+
+		sort(rooms[0].begin(), rooms[0].end(), [](Enemy* a, Enemy* b)
+		{
+			return a->get_y() < b->get_y();
+		});
+
+		for(Enemy *e: rooms[0]) 
+			if(e->is_spawn())
+			{
+				if(!r_player && e->get_y() >= main_player.get_y())
+				{
+					sword.sword_render();
+					main_player.player_render();
+					r_player = 1;
+				}
+				while(lo < (int)objects.size() && objects[lo]->get_y() <= e->get_y())
+				{
+					main_window.render_entity(*objects[lo]);
+					lo++;
+				}
+				main_window.render_entity(*e);
+			}
+		if(!r_player)
+		{
+			while(lo < (int)objects.size() && objects[lo]->get_y() <= main_player.get_y())
+			{
+				main_window.render_entity(*objects[lo]);
+				lo++;
+			}
+			sword.sword_render();
+			main_player.player_render();
+		}
+		while(lo < (int)objects.size())
+		{
+			main_window.render_entity(*objects[lo]);
+			lo++;
+		}
+
+		for(int i = 0; i < (int)health_bar.size(); ++i)
+			main_window.render_entity(*health_bar[i]);
 
 
 		main_window.present();

@@ -4,6 +4,7 @@
 using namespace std;
 
 vector <Enemy*> enemies;
+vector <Enemy*> rooms[3];
 
 Enemy::Enemy(vector2f spawn_point, SDL_Rect new_sprite):
 	Entity(spawn_point) // player's hitbox = {+8, +10, 15, 20}
@@ -26,6 +27,11 @@ bool Enemy::is_attack()
 	return attack;
 }
 
+bool Enemy::is_spawn()
+{
+	return spawned;
+}
+
 SDL_Rect Enemy::get_attack_hitbox()
 {
 	return real_attack_hitbox;
@@ -38,16 +44,28 @@ float Enemy::get_y()
 
 void spawn_enemies()
 {
-	//enemies.push_back(new Slime(vector2f(231, 63)));
-	//enemies.push_back(new Troll(vector2f(313, 63)));
-	enemies.push_back(new Orc(vector2f(423, 50)));
+	enemies.emplace_back(new Slime(vector2f(231, 63)));
+	enemies.emplace_back(new Troll(vector2f(313, 63)));
+	enemies.emplace_back(new Orc(vector2f(423, 50)));
+
+	rooms[0].emplace_back(new Orc(vector2f(429, 1)));
+	rooms[0].emplace_back(new Troll(vector2f(428, 25)));
+	rooms[0].emplace_back(new Troll(vector2f(438, 47)));
+	rooms[0].emplace_back(new Troll(vector2f(393, 65)));
+	rooms[0].emplace_back(new Troll(vector2f(362, 32)));
+	rooms[0].emplace_back(new Slime(vector2f(349, 46)));
+	rooms[0].emplace_back(new Slime(vector2f(386, 38)));
+	rooms[0].emplace_back(new Slime(vector2f(368, 67)));
+	rooms[0].emplace_back(new Slime(vector2f(424, 64)));
+	rooms[0].emplace_back(new Slime(vector2f(340, 66)));
+
 }
 
 Slime::Slime(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 32, 32})
 {
 	health_point = 5;
-	speed = 15;
+	speed = 18 + random() % 3;
 	state = 0;
 	wait = 2;
 	order = 0;
@@ -278,7 +296,7 @@ Troll::Troll(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 32, 32})
 {
 	health_point = 5;
-	speed = 25;
+	speed = 28 + random() % 3;
 	state = 0;
 	wait = 0;
 	order = 0;
@@ -491,7 +509,7 @@ Orc::Orc(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 96, 64})
 {
 	health_point = 12;
-	speed = 15;
+	speed = 15 + random() % 3;
 	state = 0;
 	wait = 0;
 	order = 0;

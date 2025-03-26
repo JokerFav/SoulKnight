@@ -1,5 +1,4 @@
 #include "player.hpp"
-#include "enemy.hpp"
 using namespace std;
 
 Player main_player;
@@ -54,7 +53,13 @@ float Player::get_y()
 	return get_leg_rect().y + get_leg_rect().h;
 }
 
-void Player::update(float current_time, bool is_attack, float delta_time)
+int Player::get_health()
+{
+	return health_point;
+}
+
+void Player::update(float current_time, bool is_attack, float delta_time, 
+	vector <Enemy*> &enemies)
 {
 	if(state == 3 && wait == 0) return;
 	hitbox.x = (int)pos.x + 8;
@@ -74,7 +79,7 @@ void Player::update(float current_time, bool is_attack, float delta_time)
 				if(SDL_HasIntersection(&hitbox, &e_hitbox))
 				{
 					int damage_taken = 2 + random() % 2;
-					health_point -= damage_taken;
+					health_point = max(health_point - damage_taken, 0);
 					is_hit = true;
 
 					if(e_hitbox.x >= hitbox.x)

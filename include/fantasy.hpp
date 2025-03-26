@@ -16,7 +16,16 @@ private:
 	float last_attack;
 };
 
+class Heart : public Entity
+{
+public:
+	Heart(vector2f new_pos);
+	void update(int new_order);
+};
+
+extern vector <Heart*> health_bar; 
 extern Sword sword;
+void set_health_bar();
 
 
 

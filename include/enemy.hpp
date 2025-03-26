@@ -9,6 +9,7 @@ public:
 	virtual ~Enemy() = default;
 	bool is_death();
 	bool is_attack();
+	bool is_spawn();
 	SDL_Rect get_attack_hitbox();
 	virtual SDL_Rect get_leg_rect() {return SDL_Rect{0, 0, 0, 0};}
 	float get_y();
@@ -21,6 +22,7 @@ protected:
 };
 
 extern vector <Enemy*> enemies;
+extern vector <Enemy*> rooms[3];
 
 void spawn_enemies();
 
@@ -61,6 +63,12 @@ private:
 	vector2f max_move, current_move;
 	SDL_Rect attack_hitbox[4];
 };
+
+/*class Neucromancer : public Enemy 
+{
+public:
+
+}*/
 
 
 

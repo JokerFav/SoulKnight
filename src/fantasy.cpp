@@ -3,6 +3,7 @@
 using namespace std;
 
 Sword sword;
+vector <Heart*> health_bar;
 
 Sword::Sword():
 	Entity()
@@ -121,4 +122,26 @@ void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 		}
 	}
 	//set_sprite(vector2f(3, order));
+}
+
+Heart::Heart(vector2f new_pos):
+	Entity(new_pos)
+{
+	state = new_pos.x;
+	sprite = SDL_Rect{0, 0, 8, 7};
+	texture = main_window.load_texture("res/heart.png");
+	order = 0;
+}
+
+void Heart::update(int new_order)
+{
+	pos.x = camera.x + state * sprite.w;
+	pos.y = camera.y + camera.h - sprite.h;
+	set_sprite(vector2f(0, new_order));
+}
+
+void set_health_bar()
+{
+	for(int i = 0; i < main_player.get_health() / 2; ++i)
+		health_bar.emplace_back(new Heart(vector2f(i, 0)));
 }
