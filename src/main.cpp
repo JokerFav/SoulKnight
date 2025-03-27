@@ -88,6 +88,10 @@ int main(int argc, char* argv[])
 					enemy->update(current_time, delta_time);
 				if(Orc* enemy = dynamic_cast<Orc*>(e))
 					enemy->update(current_time, delta_time);
+				if(Skeleton* enemy = dynamic_cast<Skeleton*>(e))
+					enemy->update(current_time, delta_time);
+				if(Projectile* enemy = dynamic_cast<Projectile*>(e))
+					enemy->update(current_time, delta_time);
 			}
 
 		for(int i = 0; i < (int)rooms[0].size(); i++)

@@ -64,11 +64,27 @@ private:
 	SDL_Rect attack_hitbox[4];
 };
 
-/*class Neucromancer : public Enemy 
+class Skeleton : public Enemy 
 {
 public:
+	Skeleton(vector2f spawn_point);
+	SDL_Rect set_attack_hitbox();
+	SDL_Rect get_leg_rect();
+	void update(float current_time, float delta_time);
+private:
+	vector2f direction;
+	vector2f max_move, current_move;
+};
 
-}*/
+class Projectile : public Enemy 
+{
+public:
+	Projectile(vector2f spawn_point, int type);
+	void update(float current_time, float delta_time);
+	float get_y();
+private:
+	vector2f direction;
+};
 
 
 

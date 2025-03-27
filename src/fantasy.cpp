@@ -23,6 +23,7 @@ void Sword::sword_render()
 	sword_pos.x = pos.x - camera.x;
 	sword_pos.y = pos.y - camera.y;
 	sword_pos.w = sword_pos.h = 32;
+	//roll = 35;
 	SDL_RenderCopyEx(main_window.renderer, get_tex(), &sword_sprite, &sword_pos, roll, 
 		NULL, get_flip());
 }
