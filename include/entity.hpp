@@ -22,6 +22,7 @@ public:
 	bool collision_detection(SDL_Rect x, vector<SDL_Rect>& y);
 	void move_x(float speed, SDL_Rect l_rect);
 	void move_y(float speed, SDL_Rect l_rect);
+	double roll;
 protected:
 	vector2f pos;
 	float last_update;

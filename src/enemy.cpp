@@ -59,8 +59,10 @@ void spawn_enemies()
 	rooms[0].emplace_back(new Slime(vector2f(424, 64)));
 	rooms[0].emplace_back(new Slime(vector2f(340, 66)));*/
 
-	rooms[0].emplace_back(new Skeleton(vector2f(340, 66)));
-	rooms[0].emplace_back(new Projectile(vector2f(340, 73), 3));
+	//rooms[0].emplace_back(new Skeleton(vector2f(340, 66)));
+	//rooms[0].emplace_back(new Projectile(vector2f(340, 73), 3));
+
+	rooms[0].emplace_back(new Projectile(vector2f(340, 73), 2));
 
 }
 
@@ -913,7 +915,7 @@ void Skeleton::update(float current_time, float delta_time)
 			
 	}
 
-	if(current_time - last_update > 0.15f)
+	if(current_time - last_update > 0.1f)
 	{
 		last_update = current_time;
 		wait--;
@@ -948,6 +950,7 @@ Projectile::Projectile(vector2f spawn_point, int type):
 	state = type;
 	spawned = attack = false;
 	order = 0;
+	speed = 60;
 	switch(type)
 	{
 		case 0: //cast summon
@@ -981,6 +984,9 @@ void Projectile::update(float current_time, float delta_time)
 	hitbox = sprite;
 	hitbox.x = (int)pos.x;
 	hitbox.y = (int)pos.y;
+	vector2f core(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2);
+	SDL_Rect player_hitbox = main_player.get_hitbox();
+	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
 
 	if(!spawned)
 	{
@@ -994,12 +1000,46 @@ void Projectile::update(float current_time, float delta_time)
 		else return;
 	}
 
+	if(state == 2)
+	{
+		if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE)
+		{
+			death = true;
+			return;
+		}
+	}
+
+	float speedx, speedy;
+	switch(state)
+	{
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			target.x = player_hitbox.x + player_hitbox.w / 2;
+			target.y = player_hitbox.y + player_hitbox.h / 2;
+			roll = get_angle_degree(-1, 0, target.x - core.x, target.y - core.y);
+			if(target.x >= core.x) direction.x = 1;
+			else direction.x = -1;
+			if(target.y >= core.y) direction.y = 1;
+			else direction.y = -1;
+			speedx = speed * cos(abs(get_angle_radian(direction.x, 0,  target.x - core.x, target.y - core.y)));
+			speedy = speed * cos(abs(get_angle_radian(0, direction.y,  target.x - core.x, target.y - core.y)));
+			move_x(speedx * delta_time * direction.x, hitbox);
+			move_y(speedy * delta_time * direction.y, hitbox);
+			break;
+		case 3:
+			break;
+	}
+
 	set_sprite(vector2f(state, order));
-	if(current_time - last_update > 0.15f)
+	if(current_time - last_update > 0.1f)
 	{
 		last_update = current_time;
 		wait--;
 		order++;
+		if(state == 2) order %= 8;
 	}
 }
 

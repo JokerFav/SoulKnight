@@ -4,7 +4,7 @@ using namespace std;
 Entity::Entity(vector2f new_pos, SDL_Texture* new_texture, int new_x, int new_y, int new_w, int new_h):
 	pos(new_pos), texture(new_texture)
 {
-	
+	roll = 0;
 	sprite.x = new_x;
 	sprite.y = new_y;
 	sprite.w = new_w;
@@ -15,7 +15,7 @@ Entity::Entity(vector2f new_pos, SDL_Texture* new_texture, int new_x, int new_y,
 Entity::Entity(vector2f new_pos, SDL_Texture* new_texture, SDL_Rect new_sprite):
 	pos(new_pos), texture(new_texture), sprite(new_sprite)
 {
-
+	roll = 0;
 }
 
 SDL_Texture* Entity::get_tex()

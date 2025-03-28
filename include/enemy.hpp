@@ -84,6 +84,7 @@ public:
 	float get_y();
 private:
 	vector2f direction;
+	float speedx, speedy;
 };
 
 

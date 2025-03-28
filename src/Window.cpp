@@ -61,5 +61,5 @@ void Window::render_entity(Entity &entity)
 	dst.w = src.w;
 	dst.h = src.h;
 
-	SDL_RenderCopyEx(renderer, entity.get_tex(), &src, &dst, 0, NULL, entity.get_flip());
+	SDL_RenderCopyEx(renderer, entity.get_tex(), &src, &dst, entity.roll, NULL, entity.get_flip());
 }

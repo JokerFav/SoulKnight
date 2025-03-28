@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <chrono>
 #include <random>
+#include <math.h>
 
 using namespace std;
 
@@ -26,13 +27,29 @@ inline mt19937 random(chrono::steady_clock::now().time_since_epoch().count());
 
 extern SDL_Rect camera;
 extern vector<SDL_Rect> map_tiles;
-const float sc45 = 0.7071f;
+const double pi = 3.14159;
 
 struct vector2f
 {
 	vector2f(float p_x = 0.0f, float p_y = 0.0f) : x(p_x), y(p_y) {}
 	float x, y;
 };
+
+inline double get_angle_degree(double x1, double y1, double x2, double y2)
+{
+	double dot = x1*x2 + y1*y2;
+	double det = x1*y2 - y1*x2;
+	double angle = atan2(det, dot) * 180 / pi;
+	return angle;
+}
+
+inline double get_angle_radian(double x1, double y1, double x2, double y2)
+{
+	double dot = x1*x2 + y1*y2;
+	double det = x1*y2 - y1*x2;
+	double angle = atan2(det, dot);
+	return angle;
+}
 
 
 
