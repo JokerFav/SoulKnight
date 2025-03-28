@@ -13,7 +13,6 @@ int main(int argc, char* argv[])
 	main_map.map_init();
 	
 	spawn_enemies();
-
 	spawn_objects();
 	sort(objects.begin(), objects.end(), [](Entity* a, Entity* b)
 	{
@@ -21,7 +20,7 @@ int main(int argc, char* argv[])
 	});
 
 	set_health_bar();
-
+	set_pos_available();
 
 	
 	bool is_running = true;
@@ -44,11 +43,12 @@ int main(int argc, char* argv[])
 		
 		Uint32 current_counter = SDL_GetPerformanceCounter();
 		float current_time = current_counter / (float)SDL_GetPerformanceFrequency();
+		cout << current_time << endl;
 		delta_time = (current_counter - last_counter)
 			/ (float)SDL_GetPerformanceFrequency();
 		last_counter = current_counter;
 
-		main_player.update(current_time, sword.is_attack(), delta_time, rooms[0]);
+		main_player.update(current_time, sword.is_attack(), delta_time, rooms[2]);
 		sword.attack(current_time, main_player.get_pos(), main_player.get_flip());
 		for(int i = 0; i < (int)health_bar.size(); ++i)
 		{
@@ -80,7 +80,13 @@ int main(int argc, char* argv[])
 			}
 		*/
 
-		for(Enemy *e: rooms[0])
+		while(enemies.size()) 
+		{
+			rooms[2].emplace_back(enemies.back());
+			enemies.pop_back();
+		}
+
+		for(Enemy *e: rooms[2])
 			{
 				if(Slime* enemy = dynamic_cast<Slime*>(e))
 					enemy->update(current_time, delta_time);
@@ -92,13 +98,15 @@ int main(int argc, char* argv[])
 					enemy->update(current_time, delta_time);
 				if(Projectile* enemy = dynamic_cast<Projectile*>(e))
 					enemy->update(current_time, delta_time);
+				if(Neucromancer* enemy = dynamic_cast<Neucromancer*>(e))
+					enemy->update(current_time, delta_time, enemies);
 			}
 
-		for(int i = 0; i < (int)rooms[0].size(); i++)
-			if((*rooms[0][i]).is_death())
+		for(int i = 0; i < (int)rooms[2].size(); i++)
+			if((*rooms[2][i]).is_death())
 			{
-				swap(rooms[0][i], rooms[0].back());
-				rooms[0].pop_back();
+				swap(rooms[2][i], rooms[2].back());
+				rooms[2].pop_back();
 				i--;
 			}
 
@@ -150,16 +158,21 @@ int main(int argc, char* argv[])
 		bool r_player = 0;
 		int lo = 0;
 
-		sort(rooms[0].begin(), rooms[0].end(), [](Enemy* a, Enemy* b)
+		sort(rooms[2].begin(), rooms[2].end(), [](Enemy* a, Enemy* b)
 		{
 			return a->get_y() < b->get_y();
 		});
 
-		for(Enemy *e: rooms[0]) 
+		for(Enemy *e: rooms[2]) 
 			if(e->is_spawn())
 			{
 				if(!r_player && e->get_y() >= main_player.get_y())
 				{
+					while(lo < (int)objects.size() && objects[lo]->get_y() <= main_player.get_y())
+					{
+						main_window.render_entity(*objects[lo]);
+						lo++;
+					}
 					sword.sword_render();
 					main_player.player_render();
 					r_player = 1;

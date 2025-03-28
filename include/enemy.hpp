@@ -21,10 +21,13 @@ protected:
 	SDL_Rect real_attack_hitbox;
 };
 
-extern vector <Enemy*> enemies;
 extern vector <Enemy*> rooms[3];
+extern vector <vector2f> pos_available;
+extern vector <Enemy*> enemies;
 
 void spawn_enemies();
+
+void set_pos_available();
 
 class Slime : public Enemy 
 {
@@ -79,12 +82,24 @@ private:
 class Projectile : public Enemy 
 {
 public:
-	Projectile(vector2f spawn_point, int type);
+	Projectile(vector2f spawn_point, int type, vector <Enemy*> &enemies);
 	void update(float current_time, float delta_time);
 	float get_y();
 private:
 	vector2f direction;
 	float speedx, speedy;
+};
+
+class Neucromancer : public Enemy
+{
+public:
+	Neucromancer(vector2f spawn_point);
+	SDL_Rect get_leg_rect();
+	void update(float current_time, float delta_time, vector <Enemy*> &enemies);
+private:
+	vector2f direction;
+	vector2f max_move, current_move;
+	float last_summon, last_fire;
 };
 
 

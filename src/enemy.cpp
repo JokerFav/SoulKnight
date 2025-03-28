@@ -5,6 +5,7 @@ using namespace std;
 
 vector <Enemy*> enemies;
 vector <Enemy*> rooms[3];
+vector <vector2f> pos_available;
 
 Enemy::Enemy(vector2f spawn_point, SDL_Rect new_sprite):
 	Entity(spawn_point) // player's hitbox = {+8, +10, 15, 20}
@@ -62,8 +63,29 @@ void spawn_enemies()
 	//rooms[0].emplace_back(new Skeleton(vector2f(340, 66)));
 	//rooms[0].emplace_back(new Projectile(vector2f(340, 73), 3));
 
-	rooms[0].emplace_back(new Projectile(vector2f(340, 73), 2));
+	//rooms[0].emplace_back(new Projectile(vector2f(340, 73), 2));
 
+	rooms[2].emplace_back(new Neucromancer(vector2f(297, 463)));
+	//rooms[2].emplace_back(new Slime(vector2f(297, 463)));
+}
+
+void set_pos_available()
+{
+	bool check_spawn;
+	SDL_Rect p_spawn = SDL_Rect{0, 0, 32, 32};
+	for(int ix = 210; ix <= 210 + 261 - 32; ix++)
+		for(int iy = 438; iy <= 438 + 132 - 32; iy++)
+		{
+			p_spawn.x = ix, p_spawn.y = iy;
+			check_spawn = 1;
+			for(int j = 0; j < (int)map_tiles.size(); ++j)
+				if(SDL_HasIntersection(&p_spawn, &map_tiles[j]) == SDL_TRUE)
+				{
+					check_spawn = 0;
+					break;
+				}
+			if(check_spawn) pos_available.emplace_back(vector2f(ix, iy));
+		}
 }
 
 Slime::Slime(vector2f spawn_point):
@@ -752,11 +774,11 @@ Skeleton::Skeleton(vector2f spawn_point):
 {
 	health_point = 4;
 	speed = 30 + random() % 3;
-	state = 0;
-	wait = 2;
-	order = 0;
 	attack = false;
 	texture = main_window.load_texture("res/skeleton.png");
+	spawned = true;
+	state = order = 0;
+	wait = 15;
 }
 
 SDL_Rect Skeleton::set_attack_hitbox()
@@ -781,19 +803,6 @@ void Skeleton::update(float current_time, float delta_time)
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
 
-	if(!spawned)
-	{
-		if( hitbox.x >= camera.x &&
-		hitbox.y >= camera.y &&
-		hitbox.x + hitbox.w <= camera.x + camera.w &&
-		hitbox.y + hitbox.h <= camera.y + camera.h)
-		{
-			spawned = true;
-			state = order = 0;
-			wait = 15;
-		}
-		else return;
-	}
 
 	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
 		&& ((state > 0 && state < 3) || (state == 3 && wait == 0)))
@@ -943,12 +952,13 @@ void Skeleton::update(float current_time, float delta_time)
 }
 
 
-Projectile::Projectile(vector2f spawn_point, int type):
+Projectile::Projectile(vector2f spawn_point, int type, vector <Enemy*> &enemies):
 	Enemy(spawn_point, {0, 0, 32, 32})
 {
 	texture = main_window.load_texture("res/projectile.png");
 	state = type;
-	spawned = attack = false;
+	attack = false;
+	spawned = true;
 	order = 0;
 	speed = 60;
 	switch(type)
@@ -963,6 +973,8 @@ Projectile::Projectile(vector2f spawn_point, int type):
 			wait = 999;
 			break;
 		case 3: // summon -> pos = +0, +7 skeleton
+			enemies.emplace_back(new 
+				Skeleton(vector2f(spawn_point.x, spawn_point.y - 7)));
 			wait = 15;
 			break;
 	}
@@ -970,17 +982,12 @@ Projectile::Projectile(vector2f spawn_point, int type):
 
 float Projectile::get_y()
 {
-	return pos.y;
+	if(state == 3) return pos.y;
+	return 9999;
 }
 
 void Projectile::update(float current_time, float delta_time)
 {
-	if(wait == 0)
-	{
-		death = true;
-		return;
-	}	
-
 	hitbox = sprite;
 	hitbox.x = (int)pos.x;
 	hitbox.y = (int)pos.y;
@@ -988,7 +995,31 @@ void Projectile::update(float current_time, float delta_time)
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
 
-	if(!spawned)
+	if(wait == 0)
+	{
+		if(state == 1)
+		{
+			state = 2;
+			wait = 999;
+			order = 0;
+			target.x = player_hitbox.x + player_hitbox.w / 2;
+			target.y = player_hitbox.y + player_hitbox.h / 2;
+			roll = get_angle_degree(-1, 0, target.x - core.x, target.y - core.y);
+			if(target.x >= core.x) direction.x = 1;
+			else direction.x = -1;
+			if(target.y >= core.y) direction.y = 1;
+			else direction.y = -1;
+			speedx = speed * cos(abs(get_angle_radian(direction.x, 0,  target.x - core.x, target.y - core.y)));
+			speedy = speed * cos(abs(get_angle_radian(0, direction.y,  target.x - core.x, target.y - core.y)));
+		}
+		else 
+		{
+			death = true;
+			return;
+		}
+	}	
+
+	/*if(!spawned)
 	{
 		if( hitbox.x >= camera.x &&
 		hitbox.y >= camera.y &&
@@ -998,7 +1029,7 @@ void Projectile::update(float current_time, float delta_time)
 			spawned = true;
 		}
 		else return;
-	}
+	}*/
 
 	if(state == 2)
 	{
@@ -1009,7 +1040,6 @@ void Projectile::update(float current_time, float delta_time)
 		}
 	}
 
-	float speedx, speedy;
 	switch(state)
 	{
 		case 0:
@@ -1017,17 +1047,9 @@ void Projectile::update(float current_time, float delta_time)
 		case 1:
 			break;
 		case 2:
-			target.x = player_hitbox.x + player_hitbox.w / 2;
-			target.y = player_hitbox.y + player_hitbox.h / 2;
-			roll = get_angle_degree(-1, 0, target.x - core.x, target.y - core.y);
-			if(target.x >= core.x) direction.x = 1;
-			else direction.x = -1;
-			if(target.y >= core.y) direction.y = 1;
-			else direction.y = -1;
-			speedx = speed * cos(abs(get_angle_radian(direction.x, 0,  target.x - core.x, target.y - core.y)));
-			speedy = speed * cos(abs(get_angle_radian(0, direction.y,  target.x - core.x, target.y - core.y)));
-			move_x(speedx * delta_time * direction.x, hitbox);
-			move_y(speedy * delta_time * direction.y, hitbox);
+			move_x(speedx * delta_time * direction.x, SDL_Rect{0, 0, 0, 0});
+			move_y(speedy * delta_time * direction.y, SDL_Rect{0, 0, 0, 0});
+			attack = true;
 			break;
 		case 3:
 			break;
@@ -1042,6 +1064,218 @@ void Projectile::update(float current_time, float delta_time)
 		if(state == 2) order %= 8;
 	}
 }
+
+Neucromancer::Neucromancer(vector2f spawn_point):
+	Enemy(spawn_point, {0, 0, 48, 48})
+{
+	health_point = 5;
+	speed = 15;
+	state = 0;
+	wait = 0;
+	order = 0;
+	last_update = last_summon = last_fire = 0;
+	texture = main_window.load_texture("res/neucro.png");
+}
+
+SDL_Rect Neucromancer::get_leg_rect()
+{
+	return SDL_Rect{16 + (int)pos.x, 35 + (int)pos.y, 12, 2};
+}
+
+void Neucromancer::update(float current_time, float delta_time, 
+	vector <Enemy*> &enemies)
+{
+	if(wait == 0 && state == 4) 
+	{
+		death = true;
+		return;
+	}
+	hitbox = SDL_Rect{18 + (int)pos.x, 21 + (int)pos.y, 10, 14};
+	real_attack_hitbox = SDL_Rect{0, 0, 0, 0};
+	vector2f core(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2);
+	SDL_Rect player_hitbox = main_player.get_hitbox();
+	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
+	attack = false;
+
+	if(!spawned)
+	{
+		if( hitbox.x >= camera.x &&
+		hitbox.y >= camera.y &&
+		hitbox.x + hitbox.w <= camera.x + camera.w &&
+		hitbox.y + hitbox.h <= camera.y + camera.h)
+		{
+			spawned = true;
+			state = 1;
+			order = 0;
+			wait = 4;
+		}
+		else return;
+	}
+
+	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
+		&& ((state > 0 && state < 3) || (state == 3 && wait == 0)))
+	{
+		state = 3;
+		order = 1;
+		wait = 4;
+		health_point--;
+		if(main_player.get_flip() == SDL_FLIP_NONE)
+			direction.x = 1;
+		else direction.x = -1;
+		direction.y = 1.0f / (1 + random() % 5);
+	}
+
+	if(health_point == 0)
+	{
+		health_point--;
+		state = 4;
+		order = 0;
+		wait = 8;
+	}
+
+
+	if(wait == 0)
+	{
+		/*if(current_time - last_summon > 10)
+		{
+			wait = 10;
+			state = 5;
+			order = 0;
+		}
+		else */
+		if(current_time - last_fire > 10)
+		{
+			wait = 1 + 9 * 6;
+			state = 6;
+			order = 0;
+		}
+		else
+		{
+			switch(state)
+			{
+				case 0:
+					break;
+				case 1:
+				{
+					state = 2;
+					order = 0;
+					wait = 8 + random() % 4;
+
+					direction.x = (random() % 2 ? 1 : -1);
+					direction.y = (random() % 2 ? 1 : -1); 
+					break;
+				}
+				case 2:
+					state = 1;
+					order = 0;
+					wait = 3 + random() % 4;
+					break;
+				case 3:
+					state = 1;
+					order = 0;
+					wait = 3 + random() % 4;
+					break;
+				case 4:
+					break;
+				case 5:
+					state = 1;
+					order = 0;
+					wait = 3 + random() % 4;
+					break;
+				case 6:
+					state = 1;
+					order = 0;
+					wait = 3 + random() % 4;
+					break;
+			}
+		}
+		
+	}
+
+	if(player_hitbox.x <= hitbox.x) set_flip(SDL_FLIP_HORIZONTAL);
+	else set_flip(SDL_FLIP_NONE);
+	switch(state)
+	{
+		case 0:
+			break;
+		case 1:
+			set_sprite(vector2f(0, order));
+			break;
+		case 2:
+			set_sprite(vector2f(1, order));
+
+			current_move.x = speed * delta_time;
+			current_move.y = speed * delta_time;
+
+			move_x(current_move.x * direction.x, get_leg_rect());
+			move_y(current_move.y * direction.y, get_leg_rect());
+
+			if(direction.x > 0.0f) set_flip(SDL_FLIP_NONE);
+			else set_flip(SDL_FLIP_HORIZONTAL);
+
+			break;
+		case 3:
+			set_sprite(vector2f(2, order));
+			move_x(speed * 2.0f * delta_time * direction.x, get_leg_rect());
+			move_y(speed * 1.5f * delta_time * direction.y, get_leg_rect());
+			break;
+		case 4:
+			set_sprite(vector2f(3, order));
+			break;
+		case 5:
+			set_sprite(vector2f(4, order));
+			break;
+		case 6:
+			set_sprite(vector2f(4, order));
+			break;
+	}
+
+	if(current_time - last_update > 0.15f)
+	{
+		last_update = current_time;
+		wait--;
+		if(order == 3 && state == 4)
+			order--;
+		order++;
+		switch(state)
+		{
+			case 0: // spawn
+				break;
+			case 1: // idle
+				order %= 4;
+				break;
+			case 2: // move
+				order %= 4;
+				break;
+			case 3: // hit
+				order %= 4;
+				break;
+			case 4: // death
+				order %= 4;
+				break;
+			case 5: // summon
+				if(wait == 9)
+				{
+					enemies.emplace_back(new Projectile(vector2f(pos.x + 7, pos.y - 8), 0, enemies));
+					for(int i = 0; i < 3; ++i)
+						enemies.emplace_back(new Projectile(pos_available[random() % (int)pos_available.size()], 3, enemies));
+				}
+				if(order == 2) order--;
+				if(wait == 0) last_summon = current_time;
+				break;
+			case 6: // fire
+				if(wait % 9 == 0 && wait)
+				{
+					enemies.emplace_back(new Projectile(vector2f(pos.x + 7, pos.y - 8), 1, enemies));
+				}
+				if(order == 2) order--;
+				if(wait == 0) last_fire = current_time;
+				break;
+		}
+	}
+}
+
+
 
 
 
