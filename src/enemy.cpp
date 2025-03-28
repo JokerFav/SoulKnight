@@ -960,7 +960,7 @@ Projectile::Projectile(vector2f spawn_point, int type, vector <Enemy*> &enemies)
 	attack = false;
 	spawned = true;
 	order = 0;
-	speed = 60;
+	speed = 50;
 	switch(type)
 	{
 		case 0: //cast summon
@@ -986,11 +986,15 @@ float Projectile::get_y()
 	return 9999;
 }
 
+void Projectile::set_death()
+{
+	death = true;
+}
+
 void Projectile::update(float current_time, float delta_time)
 {
-	hitbox = sprite;
-	hitbox.x = (int)pos.x;
-	hitbox.y = (int)pos.y;
+	hitbox = real_attack_hitbox = 
+		SDL_Rect{(int)pos.x + 13, (int)pos.y + 13, 6, 6};
 	vector2f core(hitbox.x + hitbox.w / 2, hitbox.y + hitbox.h / 2);
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
@@ -1000,7 +1004,7 @@ void Projectile::update(float current_time, float delta_time)
 		if(state == 1)
 		{
 			state = 2;
-			wait = 999;
+			wait = 50;
 			order = 0;
 			target.x = player_hitbox.x + player_hitbox.w / 2;
 			target.y = player_hitbox.y + player_hitbox.h / 2;
@@ -1068,7 +1072,7 @@ void Projectile::update(float current_time, float delta_time)
 Neucromancer::Neucromancer(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 48, 48})
 {
-	health_point = 5;
+	health_point = 20;
 	speed = 15;
 	state = 0;
 	wait = 0;
@@ -1113,8 +1117,10 @@ void Neucromancer::update(float current_time, float delta_time,
 	}
 
 	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
-		&& ((state > 0 && state < 3) || (state == 3 && wait == 0)))
+		&& (state != 3 || (state == 3 && wait == 0)))
 	{
+		if(state == 5) last_summon = current_time;
+		if(state == 6) last_fire = current_time;
 		state = 3;
 		order = 1;
 		wait = 4;
@@ -1136,14 +1142,14 @@ void Neucromancer::update(float current_time, float delta_time,
 
 	if(wait == 0)
 	{
-		/*if(current_time - last_summon > 10)
+		if(current_time - last_summon > 20)
 		{
 			wait = 10;
 			state = 5;
 			order = 0;
 		}
-		else */
-		if(current_time - last_fire > 10)
+		else 
+		if(current_time - last_fire > 7)
 		{
 			wait = 1 + 9 * 6;
 			state = 6;
@@ -1254,21 +1260,23 @@ void Neucromancer::update(float current_time, float delta_time,
 				order %= 4;
 				break;
 			case 5: // summon
+				order %= 4;
 				if(wait == 9)
 				{
 					enemies.emplace_back(new Projectile(vector2f(pos.x + 7, pos.y - 8), 0, enemies));
 					for(int i = 0; i < 3; ++i)
 						enemies.emplace_back(new Projectile(pos_available[random() % (int)pos_available.size()], 3, enemies));
 				}
-				if(order == 2) order--;
+				//if(order == 2) order--;
 				if(wait == 0) last_summon = current_time;
 				break;
 			case 6: // fire
+				order %= 4;
 				if(wait % 9 == 0 && wait)
 				{
 					enemies.emplace_back(new Projectile(vector2f(pos.x + 7, pos.y - 8), 1, enemies));
 				}
-				if(order == 2) order--;
+				//if(order == 2) order--;
 				if(wait == 0) last_fire = current_time;
 				break;
 		}

@@ -78,6 +78,8 @@ void Player::update(float current_time, bool is_attack, float delta_time,
 				SDL_Rect e_hitbox = e->get_attack_hitbox();
 				if(SDL_HasIntersection(&hitbox, &e_hitbox))
 				{
+					if(Projectile* enemy = dynamic_cast<Projectile*>(e))
+						enemy->set_death();
 					int damage_taken = 2 + random() % 2;
 					health_point = max(health_point - damage_taken, 0);
 					is_hit = true;

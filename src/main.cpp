@@ -42,8 +42,8 @@ int main(int argc, char* argv[])
 		main_window.before_render();
 		
 		Uint32 current_counter = SDL_GetPerformanceCounter();
-		float current_time = current_counter / (float)SDL_GetPerformanceFrequency();
-		cout << current_time << endl;
+		float current_time = 1.0f * SDL_GetPerformanceCounter() / (float)SDL_GetPerformanceFrequency();
+		cout << setprecision(3) << fixed << current_time << endl;
 		delta_time = (current_counter - last_counter)
 			/ (float)SDL_GetPerformanceFrequency();
 		last_counter = current_counter;

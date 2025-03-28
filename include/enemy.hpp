@@ -85,6 +85,7 @@ public:
 	Projectile(vector2f spawn_point, int type, vector <Enemy*> &enemies);
 	void update(float current_time, float delta_time);
 	float get_y();
+	void set_death();
 private:
 	vector2f direction;
 	float speedx, speedy;
