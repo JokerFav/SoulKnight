@@ -45,25 +45,19 @@ float Enemy::get_y()
 
 void spawn_enemies()
 {
-	/*enemies.emplace_back(new Slime(vector2f(231, 63)));
-	enemies.emplace_back(new Troll(vector2f(313, 63)));
-	enemies.emplace_back(new Orc(vector2f(423, 50)));
+	rooms[0].emplace_back(new Slime(vector2f(128, 31)));
+	rooms[0].emplace_back(new Slime(vector2f(143, 60)));
+	rooms[0].emplace_back(new Slime(vector2f(109, 49)));
+	rooms[0].emplace_back(new Slime(vector2f(305, 37)));
+	rooms[0].emplace_back(new Slime(vector2f(285, 52)));
+	rooms[0].emplace_back(new Troll(vector2f(376, 36)));
+	rooms[0].emplace_back(new Troll(vector2f(353, 63)));
+	rooms[0].emplace_back(new Troll(vector2f(393, 54)));
+	rooms[0].emplace_back(new Troll(vector2f(419, 65)));
+	rooms[0].emplace_back(new Door(vector2f(219, 90), 0));
+	rooms[0].emplace_back(new Door(vector2f(55, 293), 1));
+	rooms[0].emplace_back(new Door(vector2f(201, 402), 0));
 
-	rooms[0].emplace_back(new Orc(vector2f(429, 1)));
-	rooms[0].emplace_back(new Troll(vector2f(428, 25)));
-	rooms[0].emplace_back(new Troll(vector2f(438, 47)));
-	rooms[0].emplace_back(new Troll(vector2f(393, 65)));
-	rooms[0].emplace_back(new Troll(vector2f(362, 32)));
-	rooms[0].emplace_back(new Slime(vector2f(349, 46)));
-	rooms[0].emplace_back(new Slime(vector2f(386, 38)));
-	rooms[0].emplace_back(new Slime(vector2f(368, 67)));
-	rooms[0].emplace_back(new Slime(vector2f(424, 64)));
-	rooms[0].emplace_back(new Slime(vector2f(340, 66)));*/
-
-	//rooms[0].emplace_back(new Skeleton(vector2f(340, 66)));
-	//rooms[0].emplace_back(new Projectile(vector2f(340, 73), 3));
-
-	//rooms[0].emplace_back(new Projectile(vector2f(340, 73), 2));
 
 	rooms[2].emplace_back(new Neucromancer(vector2f(297, 463)));
 	//rooms[2].emplace_back(new Slime(vector2f(297, 463)));
@@ -136,6 +130,12 @@ SDL_Rect Slime::get_leg_rect()
 
 void Slime::update(float current_time, float delta_time)
 {
+	if(!spawned)
+	{
+		spawned = true;
+		state = order = 0;
+		wait = 4;
+	}
 	if(wait == 0 && state == 5) 
 	{
 		death = true;
@@ -146,20 +146,6 @@ void Slime::update(float current_time, float delta_time)
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
 	attack = false;
-
-	if(!spawned)
-	{
-		if( hitbox.x >= camera.x &&
-		hitbox.y >= camera.y &&
-		hitbox.x + hitbox.w <= camera.x + camera.w &&
-		hitbox.y + hitbox.h <= camera.y + camera.h)
-		{
-			spawned = true;
-			state = order = 0;
-			wait = 4;
-		}
-		else return;
-	}
 
 	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
 		&& ((state > 0 && state < 4) || (state == 4 && wait == 0)))
@@ -350,6 +336,13 @@ SDL_Rect Troll::get_leg_rect()
 
 void Troll::update(float current_time, float delta_time)
 {
+	if(!spawned)
+	{
+		spawned = true;
+		state = 1;
+		order = 0;
+		wait = 4;
+	}
 	if(wait == 0 && state == 5) 
 	{
 		death = true;
@@ -361,21 +354,6 @@ void Troll::update(float current_time, float delta_time)
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
 	attack = false;
-
-	if(!spawned)
-	{
-		if( hitbox.x >= camera.x &&
-		hitbox.y >= camera.y &&
-		hitbox.x + hitbox.w <= camera.x + camera.w &&
-		hitbox.y + hitbox.h <= camera.y + camera.h)
-		{
-			spawned = true;
-			state = 1;
-			order = 0;
-			wait = 4;
-		}
-		else return;
-	}
 
 	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
 		&& ((state > 0 && state < 4) || (state == 4 && wait == 0)))

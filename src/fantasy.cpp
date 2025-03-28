@@ -146,3 +146,62 @@ void set_health_bar()
 	for(int i = 0; i < main_player.get_health() / 2; ++i)
 		health_bar.emplace_back(new Heart(vector2f(i, 0)));
 }
+
+Door::Door(vector2f spawn_point, int type):
+	Enemy(spawn_point, {0, 0, 48, 32})
+{
+	state = type;
+	attack = false;
+	order = 0;
+	wait = -1;
+	last_update = 0;
+	hitbox = SDL_Rect{(int)spawn_point.x, (int)spawn_point.y + 22, 48, 4};
+	texture = main_window.load_texture("res/door.png");
+}
+
+float Door::get_y()
+{
+	return hitbox.x + hitbox.h;
+}
+
+void Door::update(float current_time, bool wave)
+{
+	if(!spawned)
+	{
+		spawned = true;
+		map_tiles.emplace_back(hitbox);
+	}
+	set_sprite(vector2f(state, order));
+	if(wait == -1)
+	{
+		if(!wave)
+		{
+			switch(state)
+			{
+				case 0:
+					order = 0;
+					wait = 6;
+					break;
+				case 1:
+					order = 0;
+					wait = 9;
+					break;
+			}
+		}
+	}
+	else
+	{
+		if(wait == 0)
+		{
+			death = true;
+			return;
+		}
+	}
+	if(current_time - last_update > 0.15f && wait > 0)
+	{
+		last_update = current_time;
+		wait--;
+		order++;
+		if(wait == 0) map_tiles.pop_back();
+	}
+}

@@ -1,6 +1,8 @@
 #ifndef fantasy_HPP
 #define fantasy_HPP
 #include "window.hpp"
+#include "enemy.hpp"
+#include "map.hpp"
 using namespace std;
 
 class Sword : public Entity
@@ -26,6 +28,14 @@ public:
 extern vector <Heart*> health_bar; 
 extern Sword sword;
 void set_health_bar();
+
+class Door : public Enemy
+{
+public:
+	Door(vector2f spawn_point, int type);
+	float get_y();
+	void update(float current_time, bool wave);
+};
 
 
 
