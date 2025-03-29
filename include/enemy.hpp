@@ -21,7 +21,7 @@ protected:
 	SDL_Rect real_attack_hitbox;
 };
 
-extern vector <Enemy*> rooms[3];
+extern vector <Enemy*> rooms[4];
 extern vector <vector2f> pos_available;
 extern vector <Enemy*> enemies;
 

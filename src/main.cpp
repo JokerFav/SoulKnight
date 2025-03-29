@@ -66,21 +66,30 @@ int main(int argc, char* argv[])
 
 		if(!wave)
 		{
+			//cout << "gay" << endl;
 			switch(current_room)
 			{
 				case 0:
 					if(main_player.get_leg_rect().x > 217) 
 					{
 						wave = 1;
-						cout << camera.x << " " << camera.x + camera.w << endl;
+						//cout << camera.x << " " << camera.x + camera.w << endl;
 					}
 					break;
 				case 1:
 					if(main_player.get_y() > 191)
 					{
 						wave = 1;
-						cout << camera.x << " " << camera.x + camera.w << endl;
+						//cout << camera.x << " " << camera.x + camera.w << endl;
 					}
+					break;
+				case 2:
+					if(main_player.get_y() > 429)
+					{
+						wave = 1;
+					}
+					break;
+				case 3:
 					break;
 			}
 			main_map.map_render();
@@ -108,11 +117,6 @@ int main(int argc, char* argv[])
 				rooms[current_room].emplace_back(enemies.back());
 				enemies.pop_back();
 			}
-			if(rooms[current_room].empty()) 
-			{
-				wave = 0;
-				current_room++;
-			}
 			for(Enemy *e: rooms[current_room])
 				{
 					if(Slime* enemy = dynamic_cast<Slime*>(e))
@@ -128,7 +132,7 @@ int main(int argc, char* argv[])
 					if(Neucromancer* enemy = dynamic_cast<Neucromancer*>(e))
 						enemy->update(current_time, delta_time, enemies);
 					if(Door* enemy = dynamic_cast<Door*>(e))
-						enemy->update(current_time, rooms[current_room].size() > 3);
+						enemy->update(current_time,rooms[current_room].size() > 3);
 				}
 
 			for(int i = 0; i < (int)rooms[current_room].size(); i++)
@@ -186,6 +190,12 @@ int main(int argc, char* argv[])
 			{
 				main_window.render_entity(*objects[lo]);
 				lo++;
+			}
+			//cout << rooms[current_room].size() << endl;
+			if(rooms[current_room].empty()) 
+			{
+				wave = 0;
+				current_room++;
 			}
 		}
 

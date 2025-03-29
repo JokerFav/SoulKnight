@@ -151,7 +151,7 @@ Door::Door(vector2f spawn_point, int type):
 	Enemy(spawn_point, {0, 0, 48, 32})
 {
 	state = type;
-	attack = false;
+	attack = death = false;
 	order = 0;
 	wait = -1;
 	last_update = 0;
@@ -161,7 +161,7 @@ Door::Door(vector2f spawn_point, int type):
 
 float Door::get_y()
 {
-	return hitbox.x + hitbox.h;
+	return hitbox.y + hitbox.h;
 }
 
 void Door::update(float current_time, bool wave)
@@ -170,6 +170,7 @@ void Door::update(float current_time, bool wave)
 	{
 		spawned = true;
 		map_tiles.emplace_back(hitbox);
+		//cout << "emplace back" << endl;
 	}
 	set_sprite(vector2f(state, order));
 	if(wait == -1)
@@ -202,6 +203,10 @@ void Door::update(float current_time, bool wave)
 		last_update = current_time;
 		wait--;
 		order++;
-		if(wait == 0) map_tiles.pop_back();
+		if(wait == 0) 
+		{
+			map_tiles.pop_back();
+			//cout << "pop back" <<endl;
+		}
 	}
 }

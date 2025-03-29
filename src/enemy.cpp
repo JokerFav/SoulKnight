@@ -4,7 +4,7 @@
 using namespace std;
 
 vector <Enemy*> enemies;
-vector <Enemy*> rooms[3];
+vector <Enemy*> rooms[4];
 vector <vector2f> pos_available;
 
 Enemy::Enemy(vector2f spawn_point, SDL_Rect new_sprite):
@@ -45,7 +45,7 @@ float Enemy::get_y()
 
 void spawn_enemies()
 {
-	rooms[0].emplace_back(new Slime(vector2f(128, 31)));
+	/*rooms[0].emplace_back(new Slime(vector2f(128, 31)));
 	rooms[0].emplace_back(new Slime(vector2f(143, 60)));
 	rooms[0].emplace_back(new Slime(vector2f(109, 49)));
 	rooms[0].emplace_back(new Slime(vector2f(305, 37)));
@@ -53,14 +53,29 @@ void spawn_enemies()
 	rooms[0].emplace_back(new Troll(vector2f(376, 36)));
 	rooms[0].emplace_back(new Troll(vector2f(353, 63)));
 	rooms[0].emplace_back(new Troll(vector2f(393, 54)));
-	rooms[0].emplace_back(new Troll(vector2f(419, 65)));
+	rooms[0].emplace_back(new Troll(vector2f(419, 65)));*/
 	rooms[0].emplace_back(new Door(vector2f(219, 90), 0));
 	rooms[0].emplace_back(new Door(vector2f(55, 293), 1));
 	rooms[0].emplace_back(new Door(vector2f(201, 402), 0));
 
 
-	rooms[2].emplace_back(new Neucromancer(vector2f(297, 463)));
-	//rooms[2].emplace_back(new Slime(vector2f(297, 463)));
+	/*rooms[1].emplace_back(new Orc(vector2f(237, 254)));
+	rooms[1].emplace_back(new Orc(vector2f(39, 173)));
+	rooms[1].emplace_back(new Troll(vector2f(94, 223)));
+	rooms[1].emplace_back(new Troll(vector2f(115, 258)));
+	rooms[1].emplace_back(new Troll(vector2f(194, 266)));
+	rooms[1].emplace_back(new Slime(vector2f(152, 233)));
+	rooms[1].emplace_back(new Slime(vector2f(170, 256)));
+	rooms[1].emplace_back(new Slime(vector2f(290, 229)));
+	rooms[1].emplace_back(new Slime(vector2f(132, 179)));*/
+	rooms[1].emplace_back(new Door(vector2f(219, 90), 0));
+	rooms[1].emplace_back(new Door(vector2f(55, 293), 1));
+	rooms[1].emplace_back(new Door(vector2f(201, 402), 0));
+
+	//rooms[2].emplace_back(new Neucromancer(vector2f(297, 463)));
+	rooms[2].emplace_back(new Door(vector2f(219, 90), 0));
+	rooms[2].emplace_back(new Door(vector2f(55, 293), 1));
+	rooms[2].emplace_back(new Door(vector2f(201, 402), 0));
 }
 
 void set_pos_available()
@@ -564,6 +579,13 @@ SDL_Rect Orc::get_leg_rect()
 
 void Orc::update(float current_time, float delta_time)
 {
+	if(!spawned)
+	{
+		spawned = true;
+		state = 1;
+		order = 0;
+		wait = 4;
+	}
 	if(wait == 0 && state == 5) 
 	{
 		death = true;
@@ -575,21 +597,6 @@ void Orc::update(float current_time, float delta_time)
 	SDL_Rect player_hitbox = main_player.get_hitbox();
 	SDL_Rect weapon_hitbox = sword.set_attack_hitbox();
 	attack = false;
-
-	if(!spawned)
-	{
-		if( hitbox.x >= camera.x &&
-		hitbox.y >= camera.y &&
-		hitbox.x + hitbox.w <= camera.x + camera.w &&
-		hitbox.y + hitbox.h <= camera.y + camera.h)
-		{
-			spawned = true;
-			state = 1;
-			order = 0;
-			wait = 4;
-		}
-		else return;
-	}
 
 	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
 		&& (state < 4 || (state == 4 && wait == 0)))
@@ -1001,18 +1008,6 @@ void Projectile::update(float current_time, float delta_time)
 		}
 	}	
 
-	/*if(!spawned)
-	{
-		if( hitbox.x >= camera.x &&
-		hitbox.y >= camera.y &&
-		hitbox.x + hitbox.w <= camera.x + camera.w &&
-		hitbox.y + hitbox.h <= camera.y + camera.h)
-		{
-			spawned = true;
-		}
-		else return;
-	}*/
-
 	if(state == 2)
 	{
 		if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE)
@@ -1050,7 +1045,7 @@ void Projectile::update(float current_time, float delta_time)
 Neucromancer::Neucromancer(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 48, 48})
 {
-	health_point = 20;
+	health_point = 1;
 	speed = 15;
 	state = 0;
 	wait = 0;
@@ -1095,7 +1090,7 @@ void Neucromancer::update(float current_time, float delta_time,
 	}
 
 	if(sword.is_attack() && SDL_HasIntersection(&weapon_hitbox, &hitbox) == SDL_TRUE
-		&& (state != 3 || (state == 3 && wait == 0)))
+		&& ((state != 3 && state != 4) || (state == 3 && wait == 0)))
 	{
 		if(state == 5) last_summon = current_time;
 		if(state == 6) last_fire = current_time;
@@ -1120,7 +1115,7 @@ void Neucromancer::update(float current_time, float delta_time,
 
 	if(wait == 0)
 	{
-		if(current_time - last_summon > 20)
+		if(current_time - last_summon > 16)
 		{
 			wait = 10;
 			state = 5;
@@ -1245,7 +1240,6 @@ void Neucromancer::update(float current_time, float delta_time,
 					for(int i = 0; i < 3; ++i)
 						enemies.emplace_back(new Projectile(pos_available[random() % (int)pos_available.size()], 3, enemies));
 				}
-				//if(order == 2) order--;
 				if(wait == 0) last_summon = current_time;
 				break;
 			case 6: // fire
@@ -1254,7 +1248,6 @@ void Neucromancer::update(float current_time, float delta_time,
 				{
 					enemies.emplace_back(new Projectile(vector2f(pos.x + 7, pos.y - 8), 1, enemies));
 				}
-				//if(order == 2) order--;
 				if(wait == 0) last_fire = current_time;
 				break;
 		}

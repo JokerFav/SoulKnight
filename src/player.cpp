@@ -11,7 +11,7 @@ Player::Player():
 	state = 0;
 	wait = 0;
 	last_update = 0;
-	health_point = 12;
+	health_point = 30;
 	speed = 60;
 }
 
