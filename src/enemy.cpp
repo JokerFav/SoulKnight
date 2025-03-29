@@ -1048,7 +1048,7 @@ void Projectile::update(float current_time, float delta_time)
 Neucromancer::Neucromancer(vector2f spawn_point):
 	Enemy(spawn_point, {0, 0, 48, 48})
 {
-	health_point = 1;
+	health_point = 20;
 	speed = 15;
 	state = 0;
 	wait = 0;
