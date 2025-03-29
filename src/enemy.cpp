@@ -45,7 +45,10 @@ float Enemy::get_y()
 
 void spawn_enemies()
 {
-	/*rooms[0].emplace_back(new Slime(vector2f(128, 31)));
+	enemies.clear();
+	for(int i = 0; i < 3; ++i) rooms[i].clear(); 
+
+	rooms[0].emplace_back(new Slime(vector2f(128, 31)));
 	rooms[0].emplace_back(new Slime(vector2f(143, 60)));
 	rooms[0].emplace_back(new Slime(vector2f(109, 49)));
 	rooms[0].emplace_back(new Slime(vector2f(305, 37)));
@@ -53,13 +56,13 @@ void spawn_enemies()
 	rooms[0].emplace_back(new Troll(vector2f(376, 36)));
 	rooms[0].emplace_back(new Troll(vector2f(353, 63)));
 	rooms[0].emplace_back(new Troll(vector2f(393, 54)));
-	rooms[0].emplace_back(new Troll(vector2f(419, 65)));*/
+	rooms[0].emplace_back(new Troll(vector2f(419, 65)));
 	rooms[0].emplace_back(new Door(vector2f(219, 90), 0));
 	rooms[0].emplace_back(new Door(vector2f(55, 293), 1));
 	rooms[0].emplace_back(new Door(vector2f(201, 402), 0));
 
 
-	/*rooms[1].emplace_back(new Orc(vector2f(237, 254)));
+	rooms[1].emplace_back(new Orc(vector2f(237, 254)));
 	rooms[1].emplace_back(new Orc(vector2f(39, 173)));
 	rooms[1].emplace_back(new Troll(vector2f(94, 223)));
 	rooms[1].emplace_back(new Troll(vector2f(115, 258)));
@@ -67,12 +70,12 @@ void spawn_enemies()
 	rooms[1].emplace_back(new Slime(vector2f(152, 233)));
 	rooms[1].emplace_back(new Slime(vector2f(170, 256)));
 	rooms[1].emplace_back(new Slime(vector2f(290, 229)));
-	rooms[1].emplace_back(new Slime(vector2f(132, 179)));*/
+	rooms[1].emplace_back(new Slime(vector2f(132, 179)));
 	rooms[1].emplace_back(new Door(vector2f(219, 90), 0));
 	rooms[1].emplace_back(new Door(vector2f(55, 293), 1));
 	rooms[1].emplace_back(new Door(vector2f(201, 402), 0));
 
-	//rooms[2].emplace_back(new Neucromancer(vector2f(297, 463)));
+	rooms[2].emplace_back(new Neucromancer(vector2f(297, 463)));
 	rooms[2].emplace_back(new Door(vector2f(219, 90), 0));
 	rooms[2].emplace_back(new Door(vector2f(55, 293), 1));
 	rooms[2].emplace_back(new Door(vector2f(201, 402), 0));

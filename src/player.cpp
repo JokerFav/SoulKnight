@@ -4,14 +4,14 @@ using namespace std;
 Player main_player;
 
 Player::Player():
-	Entity({CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2})
+	Entity({73, 53})
 {
 	texture = main_window.load_texture("res/player.png");
 	order = 0;
 	state = 0;
 	wait = 0;
 	last_update = 0;
-	health_point = 30;
+	health_point = 12;
 	speed = 60;
 }
 
@@ -105,7 +105,7 @@ void Player::update(float current_time, bool is_attack, float delta_time,
 			else 
 			{
 				state = 3;
-				wait = 200;
+				wait = 50;
 			}
 		}
 		else
@@ -171,6 +171,11 @@ void Player::update(float current_time, bool is_attack, float delta_time,
 			case 2: // hit
 				break;
 			case 3: // death
+				if(wait == 0)
+				{
+					current_game_state = 1;
+					fade_state = 1;
+				}
 				break;
 		}
 	}

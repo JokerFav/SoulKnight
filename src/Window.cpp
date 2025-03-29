@@ -63,3 +63,21 @@ void Window::render_entity(Entity &entity)
 
 	SDL_RenderCopyEx(renderer, entity.get_tex(), &src, &dst, entity.roll, NULL, entity.get_flip());
 }
+
+void Window::render_fade()
+{
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, current_opacity);
+	SDL_RenderFillRect(renderer, NULL);
+	int speed = 5;
+	switch(fade_state)
+	{
+		case 1: // increase opacity
+			current_opacity = min(current_opacity + speed, 255);
+			if(current_opacity == 255) fade_state = 2;
+			break;
+		case 2: // decrease opacity
+			current_opacity = max(current_opacity - speed, 0);
+			if(current_opacity == 0) fade_state = 0;
+			break;
+	}
+}

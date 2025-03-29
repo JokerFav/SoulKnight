@@ -16,6 +16,7 @@ Entity::Entity(vector2f new_pos, SDL_Texture* new_texture, SDL_Rect new_sprite):
 	pos(new_pos), texture(new_texture), sprite(new_sprite)
 {
 	roll = 0;
+	flip = SDL_FLIP_NONE;
 }
 
 SDL_Texture* Entity::get_tex()

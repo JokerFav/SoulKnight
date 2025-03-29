@@ -16,6 +16,7 @@ void Map::map_init()
 	camera.h = CAMERA_HEIGHT;
 
 	// map rectangle
+	map_tiles.clear();
 	map_tiles.emplace_back(SDL_Rect{49, 41, 443, 7});
 	map_tiles.emplace_back(SDL_Rect{307, 48, 14, 1});
 	map_tiles.emplace_back(SDL_Rect{43, 48, 6, 68});

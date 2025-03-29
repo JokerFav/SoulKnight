@@ -12,6 +12,7 @@
 #include <random>
 #include <math.h>
 #include <iomanip>
+#include <random>
 
 using namespace std;
 
@@ -22,9 +23,8 @@ const int MAP_HEIGHT = 1200;
 const int CAMERA_WIDTH = 200;
 const int CAMERA_HEIGHT = 152;
 const string WINDOW_NAME = "JokerFav's screen";
-const int FPS = 60;
+const int FPS = 100;
 const float FRAME_DELAY = 1000.0f / FPS;
-inline mt19937 random(chrono::steady_clock::now().time_since_epoch().count());
 
 extern SDL_Rect camera;
 extern vector<SDL_Rect> map_tiles;
@@ -35,6 +35,9 @@ struct vector2f
 	vector2f(float p_x = 0.0f, float p_y = 0.0f) : x(p_x), y(p_y) {}
 	float x, y;
 };
+
+inline mt19937 random(chrono::steady_clock::now().time_since_epoch().count());
+inline int fade_state, current_opacity, current_game_state;
 
 inline double get_angle_degree(double x1, double y1, double x2, double y2)
 {
