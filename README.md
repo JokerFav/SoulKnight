@@ -151,6 +151,24 @@ An RPG game following the Dungeon Crawl scenario, inspired by Soul Knight from C
 
 ![image](https://github.com/user-attachments/assets/9357df59-c0f6-4c01-877b-5aa16fba6012)
 
+## IV.References
+
+### Game mechanics:
+
+https://www.youtube.com/playlist?list=PLvv0ScY6vfd-p1gSnbQhY7vMe2rng0IL0
+
+https://lazyfoo.net/tutorials/SDL/
+
+### Sprite resources:
+
+https://kevins-moms-house.itch.io/
+
+https://bdragon1727.itch.io/
+
+### Sound resources:
+
+https://www.sounds-resource.com/
+
 
 
 
