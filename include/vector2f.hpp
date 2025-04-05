@@ -5,6 +5,7 @@
 #include <cmath>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -13,6 +14,7 @@
 #include <math.h>
 #include <iomanip>
 #include <random>
+#include <unordered_map>
 
 using namespace std;
 

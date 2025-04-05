@@ -4,6 +4,7 @@
 #include "fantasy.hpp"
 #include "enemy.hpp"
 #include "window.hpp"
+#include "audio.hpp"
 using namespace std;
 
 int main(int argc, char* argv[])
@@ -21,6 +22,7 @@ int main(int argc, char* argv[])
 
 	set_health_bar();
 	set_pos_available();
+	sound.init();
 
 	
 	bool is_running = true;
@@ -33,6 +35,7 @@ int main(int argc, char* argv[])
 	fade_state = 1;
 	Entity game_over_screen = Entity(vector2f(0, 0), main_window.load_texture("res/game_over.png"), camera);
 	Entity title_screen = Entity(vector2f(0, 0), main_window.load_texture("res/title_screen.png"), camera);
+	Mix_PlayMusic(sound.title, -1);
 
 
 	while(is_running)
@@ -46,20 +49,13 @@ int main(int argc, char* argv[])
 			{
 				is_running = false;
 			}
-		}
-
-		switch(current_game_state)
-		{
-			case 0:
-				break;
-			case 2:
-				if(event.type == SDL_KEYDOWN && 
-					event.key.keysym.sym == SDLK_RETURN)
-				{
-					current_game_state = 0;
-					fade_state = 1;
-				}
-				break;
+			else if(event.type == SDL_KEYDOWN && 
+					event.key.keysym.sym == SDLK_RETURN) // game_running
+			{
+				current_game_state = 0;
+				Mix_PlayMusic(sound.ingame, -1);
+				fade_state = 1;
+			}
 		}
 		
 		Uint32 current_counter = SDL_GetPerformanceCounter();
@@ -96,15 +92,24 @@ int main(int argc, char* argv[])
 						switch(current_room)
 						{
 							case 0:
-								if(main_player.get_leg_rect().x > 217) wave = 1;
+								if(main_player.get_leg_rect().x > 217) 
+								{
+									wave = 1;
+									Mix_PlayMusic(sound.wave, -1);
+								}
 								break;
 							case 1:
-								if(main_player.get_y() > 191) wave = 1;
+								if(main_player.get_y() > 191) 
+								{
+									wave = 1;
+									Mix_PlayMusic(sound.wave, -1);
+								}
 								break;
 							case 2:
 								if(main_player.get_y() > 429)
 								{
 									wave = 1;
+									Mix_PlayMusic(sound.boss_theme, -1);
 								}
 								break;
 							case 3:
@@ -213,6 +218,7 @@ int main(int argc, char* argv[])
 						{
 							wave = 0;
 							current_room++;
+							Mix_PlayMusic(sound.ingame, -1);
 						}
 					}
 

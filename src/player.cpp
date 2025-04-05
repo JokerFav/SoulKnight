@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "audio.hpp"
 using namespace std;
 
 Player main_player;
@@ -110,13 +111,20 @@ void Player::update(float current_time, bool is_attack, float delta_time,
 		}
 		else
 		{
-			wait = 1;
 			if(key[SDL_SCANCODE_W] ||
 				key[SDL_SCANCODE_S] ||
 				key[SDL_SCANCODE_A] ||
 				key[SDL_SCANCODE_D])
+			{
 				state = 1;
-			else state = 0;
+				wait = 4;
+				sound.play("player/walk");
+			}
+			else 
+			{
+				state = 0;
+				wait = 1;
+			}
 		}
 	}
 
@@ -175,6 +183,7 @@ void Player::update(float current_time, bool is_attack, float delta_time,
 				{
 					current_game_state = 1;
 					fade_state = 1;
+					Mix_PlayMusic(sound.title, -1);
 				}
 				break;
 		}

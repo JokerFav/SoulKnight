@@ -94,6 +94,7 @@ void Sword::attack(float now, vector2f player_pos, SDL_RendererFlip player_flip)
 			else state = 2;
 			order = 0;
 			last_attack = now;
+			sound.play("sword/attack");
 		}
 		else 
 		{

@@ -1,6 +1,7 @@
 #ifndef entity_HPP
 #define entity_HPP
 #include "vector2f.hpp"
+#include "audio.hpp"
 using namespace std;
 
 
